@@ -1,0 +1,59 @@
+<template>
+	<form v-on:click="$emit('submit', this.data)">
+		<h2>Connect to IRC</h2>
+
+		<label>
+			Nickname:<br/>
+			<input type="username" v-model="nick" autofocus required/>
+		</label>
+		<br/><br/>
+
+		<label for="connect-password">Password:</label><br/>
+		<input type="password" name="password" id="connect-password"/>
+		<br/><br/>
+
+		<input type="checkbox" name="remember-me" id="connect-remember-me"/>
+		<label for="connect-remember-me">Remember me</label>
+		<br/><br/>
+
+		<details>
+			<summary>Advanced options</summary>
+
+			<br/>
+
+			<label for="connect-url">Server URL:</label><br/>
+			<input type="url" name="url" id="connect-url"/>
+			<br/><br/>
+
+			<label for="connect-username">Username:</label><br/>
+			<input type="username" name="username" id="connect-username" placeholder="Same as nickname"/>
+			<br/><br/>
+
+			<label for="connect-realname">Real name:</label><br/>
+			<input type="text" name="realname" id="connect-realname" placeholder="Same as nickname"/>
+			<br/><br/>
+
+			<label for="connect-pass">Server password:</label><br/>
+			<input type="text" name="pass" id="connect-pass" placeholder="None"/>
+			<br/><br/>
+
+			<label for="connect-autojoin">Auto-join channels:</label><br/>
+			<input type="text" name="autojoin" id="connect-autojoin" placeholder="Comma-separated list of channels"/>
+			<br/>
+		</details>
+
+		<br/>
+
+		<button>Connect</button>
+	</form>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			nick: "",
+		};
+	},
+};
+</script>

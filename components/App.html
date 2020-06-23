@@ -1,0 +1,31 @@
+<template>
+	<div id="app">
+		<section id="sidebar">
+			<ul id="buffer-list">
+				<!--<li class="active"><a href="#">##soju-playground</a></li>-->
+			</ul>
+		</section>
+		<section id="buffer">
+			<!--<div class="logline">
+				<a href="#" class="timestamp">12:27:42</a>
+				&lt;<a href="#" class="nick">emersion</a>&gt;
+				Hi there!
+			</div>-->
+		</section>
+		<form id="composer">
+			<input type="text" placeholder="Type a message">
+		</form>
+
+		<section id="connect">
+			<Connect/>
+		</section>
+	</div>
+</template>
+
+<script>
+import Connect from "./Connect.html";
+
+export default {
+	components: { Connect },
+};
+</script>

@@ -1,4 +1,12 @@
-import * as irc from "./irc.js";
+import * as irc from "./lib/irc.js";
+
+import Vue from "vue";
+import App from "./components/App.html";
+
+new Vue({
+	el: "body",
+	render: (createElement) => createElement(App),
+});
 
 var server = {
 	name: "server",

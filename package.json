@@ -1,10 +1,19 @@
 {
   "name": "gamja",
-  "devDependencies": {
-    "http-server": "^0.12.3"
-  },
+  "private": true,
   "scripts": {
-    "start": "http-server ."
+    "build": "webpack --mode production",
+    "watch": "webpack --watch --mode development",
+    "start": "webpack-dev-server"
   },
-  "private": true
+  "dependencies": {
+    "vue": "^2.6.11"
+  },
+  "devDependencies": {
+    "vue-loader": "^15.9.3",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  }
 }
