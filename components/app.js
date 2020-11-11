@@ -332,15 +332,29 @@ export default class App extends Component {
 
 		this.setBufferState(bufName, (buf, state) => {
 			// TODO: set unread if scrolled up
+
 			var unread = buf.unread;
 			var lastReadReceipt = buf.lastReadReceipt;
 			if (state.activeBuffer != buf.name) {
 				unread = Unread.union(unread, msgUnread);
 			} else {
+				var prevReadReceipt = this.getReceipt(bufName, ReceiptType.READ);
 				this.setReceipt(bufName, ReceiptType.READ, msg);
-				lastReadReceipt = this.getReceipt(bufName, ReceiptType.READ);
+
+				var lastMsg = null;
+				if (buf.messages.length > 0) {
+					lastMsg = buf.messages[buf.messages.length - 1];
+				}
+
+				// If all messages were read and the buffer is current, advance
+				// the last read receipt
+				if (lastMsg && prevReadReceipt && prevReadReceipt.time >= lastMsg.tags.time) {
+					lastReadReceipt = this.getReceipt(bufName, ReceiptType.READ);
+				}
 			}
+
 			var messages = insertMessage(buf.messages, msg);
+
 			return { messages, unread, lastReadReceipt };
 		});
 	}
