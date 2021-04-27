@@ -28,6 +28,10 @@ export default function BufferHeader(props) {
 		event.preventDefault();
 		props.onJoin();
 	}
+	function handleRegisterClick(event) {
+		event.preventDefault();
+		props.onRegister();
+	}
 
 	var description = null;
 	if (props.buffer.serverInfo) {
@@ -71,7 +75,11 @@ export default function BufferHeader(props) {
 	var closeText = "Close";
 	switch (props.buffer.type) {
 	case BufferType.SERVER:
-		actions = html`<a href="#" onClick=${handleJoinClick}>Join</a>`;
+		actions = html`
+			<a href="#" onClick=${handleJoinClick}>Join</a>
+			${" "}
+			<a href="#" onClick=${handleRegisterClick}>Register</a>
+		`;
 		closeText = "Disconnect";
 		break;
 	case BufferType.CHANNEL:

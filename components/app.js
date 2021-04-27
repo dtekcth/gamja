@@ -6,6 +6,8 @@ import BufferHeader from "./buffer-header.js";
 import MemberList from "./member-list.js";
 import ConnectForm from "./connect-form.js";
 import JoinForm from "./join-form.js";
+import RegisterForm from "./register-form.js";
+import VerifyForm from "./verify-form.js";
 import Help from "./help.js";
 import Composer from "./composer.js";
 import ScrollManager from "./scroll-manager.js";
@@ -162,6 +164,8 @@ export default class App extends Component {
 
 		this.handleConnectSubmit = this.handleConnectSubmit.bind(this);
 		this.handleJoinSubmit = this.handleJoinSubmit.bind(this);
+		this.handleRegisterSubmit = this.handleRegisterSubmit.bind(this);
+		this.handleVerifySubmit = this.handleVerifySubmit.bind(this);
 		this.handleBufferListClick = this.handleBufferListClick.bind(this);
 		this.handleComposerSubmit = this.handleComposerSubmit.bind(this);
 		this.handleNickClick = this.handleNickClick.bind(this);
@@ -848,6 +852,44 @@ export default class App extends Component {
 		this.setState({ dialog: null, joinDialog: null });
 	}
 
+	handleRegisterClick(netID) {
+		this.setState({ dialog: "register", registerDialog: { network: netID } });
+	}
+
+	handleRegisterSubmit(data) {
+		var netID = this.state.registerDialog.network;
+		var client = this.clients.get(netID);
+
+		client
+			.registerAccount(data.email, data.password)
+			.then((data) => {
+				this.setState({ dialog: null, registerDialog: null });
+
+				if (data.result == "VERIFICATION_REQUIRED") {
+					this.setState({
+						dialog: "verify",
+						verifyDialog: { network: netID, account: data.account },
+					});
+				}
+			})
+			.catch((err) => {
+				this.setState({ error: err });
+			});
+	}
+
+	handleVerifySubmit(data) {
+		var client = this.clients.get(this.state.verifyDialog.network);
+
+		client
+			.verifyAccount(this.state.verifyDialog.account, data.code)
+			.then((data) => {
+				this.setState({ dialog: null, verifyDialog: null });
+			})
+			.catch((err) => {
+				this.setState({ error: err });
+			});
+	}
+
 	autocomplete(prefix) {
 		function fromList(l, prefix) {
 			prefix = prefix.toLowerCase();
@@ -953,6 +995,7 @@ export default class App extends Component {
 						network=${activeNetwork}
 						onClose=${() => this.close(activeBuffer)}
 						onJoin=${() => this.handleJoinClick(activeBuffer.network)}
+						onRegister=${() => this.handleRegisterClick(activeBuffer.network)}
 					/>
 				</section>
 			`;
@@ -986,6 +1029,20 @@ export default class App extends Component {
 			dialog = html`
 				<${Dialog} title="Join channel" onDismiss=${this.handleDialogDismiss}>
 					<${JoinForm} onSubmit=${this.handleJoinSubmit}/>
+				</>
+			`;
+			break;
+		case "register":
+			dialog = html`
+				<${Dialog} title="Register account" onDismiss=${this.handleDialogDismiss}>
+					<${RegisterForm} error=${this.state.error} onSubmit=${this.handleRegisterSubmit}/>
+				</>
+			`;
+			break;
+		case "verify":
+			dialog = html`
+				<${Dialog} title="Verify account" onDismiss=${this.handleDialogDismiss}>
+					<${VerifyForm} error=${this.state.error} onSubmit=${this.handleVerifySubmit}/>
 				</>
 			`;
 			break;
