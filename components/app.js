@@ -114,6 +114,21 @@ function showNotification(title, options) {
 	}
 }
 
+function urlBase64ToUint8Array(base64String) {
+	var padding = '='.repeat((4 - base64String.length % 4) % 4);
+	var base64 = (base64String + padding)
+		.replace(/\-/g, '+')
+		.replace(/_/g, '/');
+
+	var rawData = window.atob(base64);
+	var outputArray = new Uint8Array(rawData.length);
+
+	for (var i = 0; i < rawData.length; ++i) {
+		outputArray[i] = rawData.charCodeAt(i);
+	}
+	return outputArray;
+}
+
 export default class App extends Component {
 	state = {
 		connectParams: {
@@ -508,6 +523,47 @@ export default class App extends Component {
 			this.setServerState(serverID, { status: client.status });
 			if (client.status === Client.Status.REGISTERED) {
 				this.setState({ connectForm: false });
+
+				navigator.serviceWorker.ready.then((registration) => {
+					return registration.pushManager.getSubscription()
+					.then((subscription) => {
+						if (subscription) {
+							return subscription;
+						}
+						var msg = {
+							command: "WEBPUSH",
+							params: ["VAPIDPUBKEY"],
+						};
+						return client.roundtrip(msg, (event) => {
+							var msg = event.detail.message;
+
+							switch (msg.command) {
+							case "WEBPUSH":
+								if (msg.params[0] === "VAPIDPUBKEY") {
+									return urlBase64ToUint8Array(msg.params[1]);
+								}
+								break;
+							case "FAIL":
+								if (msg.params[0] === "WEBPUSH") {
+									throw msg;
+								}
+								break;
+							}
+						}).then((vapidPubKey) => {
+							return registration.pushManager.subscribe({
+								userVisibleOnly: true,
+								applicationServerKey: vapidPubKey,
+							});
+						});
+					}).then((subscription) => {
+						var data = subscription.toJSON();
+						var keysStr = irc.formatTags(data.keys);
+						client.send({
+							command: "WEBPUSH",
+							params: ["REGISTER", data.endpoint, keysStr],
+						});
+					});
+				});
 			}
 		});
 
