@@ -192,6 +192,10 @@ export default class App extends Component {
 	handleConfig(config) {
 		this.setState({ loading: false });
 
+		if (typeof config.title === "string") {
+			document.title = config.title;
+		}
+
 		let connectParams = { ...this.state.connectParams };
 
 		if (config.server) {

@@ -106,7 +106,9 @@ gamja default settings can be set using a `config.json` file at the root:
 		// disable. Enabling PINGs can have an impact on client power usage and
 		// should only be enabled if necessary.
 		"ping": 60
-	}
+	},
+	// Custom title (string).
+	"title": "gamja IRC client"
 }
 ```
 
