@@ -1101,6 +1101,11 @@ export default class App extends Component {
 					from = receiptFromMessage(lastMsg);
 				}
 
+				if (client.caps.enabled.has("soju.im/search")) {
+					// TODO:
+					return;
+				}
+
 				client.fetchHistoryBetween(target.name, from, to, CHATHISTORY_MAX_SIZE).then((result) => {
 					for (let msg of result.messages) {
 						let destBuffers = this.routeMessage(serverID, msg);
