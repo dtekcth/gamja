@@ -4,6 +4,12 @@ A simple IRC web client.
 
 ![screenshot](https://l.sr.ht/7Npm.png)
 
+## Fork notes
+
+This is a fork of [gamja](https://git.sr.ht/~emersion/gamja).
+The only reason for the fork is to build a docker image.
+Please don't change stuff.
+
 ## Usage
 
 Requires an IRC WebSocket server.
@@ -80,11 +86,11 @@ Optionally, [Parcel] can be used to build a minified version of gamja.
 
 gamja settings can be overridden using URL query parameters:
 
-- `server`: path or URL to the WebSocket server
-- `nick`: nickname
-- `channels`: comma-separated list of channels to join (`#` needs to be escaped)
-- `open`: [IRC URL] to open
-- `debug`: if set to 1, debug mode is enabled
+-   `server`: path or URL to the WebSocket server
+-   `nick`: nickname
+-   `channels`: comma-separated list of channels to join (`#` needs to be escaped)
+-   `open`: [IRC URL] to open
+-   `debug`: if set to 1, debug mode is enabled
 
 Alternatively, the channels can be set with the URL fragment (ie, by just
 appending the channel name to the gamja URL).
@@ -150,6 +156,6 @@ Copyright (C) 2020 The gamja Contributors
 [webircgateway]: https://github.com/kiwiirc/webircgateway
 [mailing list]: https://lists.sr.ht/~emersion/public-inbox
 [issue tracker]: https://todo.sr.ht/~emersion/gamja
-[Parcel]: https://parceljs.org
-[IRC URL]: https://datatracker.ietf.org/doc/html/draft-butcher-irc-url-04
-[#soju on Libera Chat]: ircs://irc.libera.chat/#soju
+[parcel]: https://parceljs.org
+[irc url]: https://datatracker.ietf.org/doc/html/draft-butcher-irc-url-04
+[#soju on libera chat]: ircs://irc.libera.chat/#soju
