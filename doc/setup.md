@@ -18,8 +18,9 @@ enabled = true
 webroot = /path/to/gamja
 ```
 
-Then connect to webircgateway and append `?server=/webirc/websocket/` to the
-URL.
+Then configure gamja to connect to `/webirc/websocket/` (either by setting
+`server.url` in the [configuration file], or by appending
+`?server=/webirc/websocket/` to the URL).
 
 ## nginx
 
@@ -48,3 +49,4 @@ server doesn't send PINGs, you can set the `server.ping` option in
 
 [soju]: https://soju.im
 [webircgateway]: https://github.com/kiwiirc/webircgateway
+[configuration file]: config-file.md
