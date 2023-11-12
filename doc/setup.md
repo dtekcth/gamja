@@ -47,6 +47,20 @@ If you are unable to configure the proxy timeout accordingly, or if your IRC
 server doesn't send PINGs, you can set the `server.ping` option in
 `config.json` (see below).
 
+## [kimchi]
+
+Setup kimchi to serve gamja files and proxy the WebSocket connection:
+
+```
+site irc.example.org {
+	file_server /path/to/gamja
+}
+site irc.example.org/socket {
+	reverse_proxy http://127.0.0.1:8080
+}
+```
+
 [soju]: https://soju.im
 [webircgateway]: https://github.com/kiwiirc/webircgateway
+[kimchi]: https://sr.ht/~emersion/kimchi/
 [configuration file]: config-file.md
