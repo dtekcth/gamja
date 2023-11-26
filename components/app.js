@@ -200,6 +200,7 @@ export default class App extends Component {
 	autoOpenURL = null;
 	messageNotifications = new Set();
 	baseTitle = null;
+	lastFocusPingDate = null;
 
 	constructor(props) {
 		super(props);
@@ -1923,6 +1924,13 @@ export default class App extends Component {
 	handleWindowFocus() {
 		// When the user focuses gamja, send a PING to make sure we detect any
 		// network errors ASAP
+
+		let now = new Date();
+		if (this.lastFocusPingDate && now.getTime() - this.lastFocusPingDate.getTime() < 15 * 1000) {
+			return;
+		}
+		this.lastFocusPingDate = now;
+
 		for (let client of this.clients.values()) {
 			client.send({ command: "PING", params: ["gamja"] });
 		}
