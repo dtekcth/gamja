@@ -15,6 +15,9 @@ gamja can be configured using a `config.json` file at the root. Example:
 }
 ```
 
+Errors while parsing the configuration file are logged in the
+[browser's web console].
+
 ## IRC server
 
 The `server` object configures the IRC server.
@@ -43,3 +46,5 @@ The `oauth2` object configures OAuth 2.0 authentication.
 - `client_id` (string): OAuth 2.0 client ID.
 - `client_secret` (string): OAuth 2.0 client secret.
 - `scope` (string): OAuth 2.0 scope.
+
+[browser's web console]: https://firefox-source-docs.mozilla.org/devtools-user/web_console/index.html
