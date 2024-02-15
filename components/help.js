@@ -26,11 +26,13 @@ function KeyBindingsHelp() {
 		`;
 	});
 
+	l.push(html`
+		<dt><kbd>Tab</kbd></dt>
+		<dd>Automatically complete nickname or channel</dd>
+	`);
+
 	if (!window.matchMedia("(pointer: none)").matches) {
 		l.push(html`
-			<dt><kbd>Tab</kbd></dt>
-			<dd>Automatically complete nickname or channel</dd>
-
 			<dt><strong>Middle mouse click</strong></dt>
 			<dd>Close buffer</dd>
 		`);
