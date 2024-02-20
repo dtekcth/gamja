@@ -41,7 +41,7 @@ class MemberItem extends Component {
 			`;
 		};
 
-		let title = null;
+		let title;
 		let user = this.props.user;
 		let classes = ["nick"];
 		if (user) {

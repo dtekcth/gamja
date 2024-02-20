@@ -1,4 +1,5 @@
 import * as irc from "../lib/irc.js";
+import { strip as stripANSI } from "../lib/ansi.js";
 import { html, Component } from "../lib/index.js";
 import { BufferType, Unread, ServerStatus, getBufferURL, getServerName } from "../state.js";
 
@@ -19,6 +20,7 @@ function BufferItem(props) {
 		name = getServerName(props.server, props.bouncerNetwork);
 	}
 
+	let title;
 	let classes = ["type-" + props.buffer.type];
 	if (props.active) {
 		classes.push("active");
@@ -26,7 +28,8 @@ function BufferItem(props) {
 	if (props.buffer.unread != Unread.NONE) {
 		classes.push("unread-" + props.buffer.unread);
 	}
-	if (props.buffer.type === BufferType.SERVER) {
+	switch (props.buffer.type) {
+	case BufferType.SERVER:
 		let isError = props.server.status === ServerStatus.DISCONNECTED;
 		if (props.bouncerNetwork && props.bouncerNetwork.error) {
 			isError = true;
@@ -34,19 +37,26 @@ function BufferItem(props) {
 		if (isError) {
 			classes.push("error");
 		}
+		break;
+	case BufferType.NICK:
+		let user = props.server.users.get(name);
+		if (user && irc.isMeaningfulRealname(user.realname, name)) {
+			title = stripANSI(user.realname);
+		}
+		break;
 	}
 
 	return html`
 		<li class="${classes.join(" ")}">
 			<a
 				href=${getBufferURL(props.buffer)}
+				title=${title}
 				onClick=${handleClick}
 				onMouseDown=${handleMouseDown}
 			>${name}</a>
 		</li>
 	`;
 }
-
 
 export default function BufferList(props) {
 	let items = Array.from(props.buffers.values()).map((buf) => {
