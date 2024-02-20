@@ -21,9 +21,19 @@ function Nick(props) {
 		props.onClick();
 	}
 
+	let title;
+	if (props.user && irc.isMeaningfulRealname(props.user.realname, props.nick)) {
+		title = stripANSI(props.user.realname);
+	}
+
 	let colorIndex = djb2(props.nick) % 16 + 1;
 	return html`
-		<a href=${irc.formatURL({ entity: props.nick })} class="nick nick-${colorIndex}" onClick=${handleClick}>${props.nick}</a>
+		<a
+			href=${irc.formatURL({ entity: props.nick })}
+			title=${title}
+			class="nick nick-${colorIndex}"
+			onClick=${handleClick}
+		>${props.nick}</a>
 	`;
 }
 
@@ -98,7 +108,11 @@ class LogLine extends Component {
 
 		function createNick(nick) {
 			return html`
-				<${Nick} nick=${nick} onClick=${() => onNickClick(nick)}/>
+				<${Nick}
+					nick=${nick}
+					user=${server.users.get(nick)}
+					onClick=${() => onNickClick(nick)}
+				/>
 			`;
 		}
 		function createChannel(channel) {
@@ -325,11 +339,16 @@ class FoldGroup extends Component {
 	render() {
 		let msgs = this.props.messages;
 		let buf = this.props.buffer;
+		let server = this.props.server;
 
 		let onNickClick = this.props.onNickClick;
 		function createNick(nick) {
 			return html`
-				<${Nick} nick=${nick} onClick=${() => onNickClick(nick)}/>
+				<${Nick}
+					nick=${nick}
+					user=${server.users.get(nick)}
+					onClick=${() => onNickClick(nick)}
+				/>
 			`;
 		}
 
