@@ -388,6 +388,7 @@ details summary[role="button"] {
 }
 #buffer .logline {
 	white-space: pre-wrap;
+	overflow: auto;
 }
 #buffer .talk, #buffer .motd {
 	color: var(--main-color);
