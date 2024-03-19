@@ -5,8 +5,9 @@ the same HTTP server is used as a reverse proxy for the IRC WebSocket.
 
 ## [soju]
 
-Add a WebSocket listener to soju, e.g. `listen wss://127.0.0.1:8080`. Then
-configure your reverse proxy to serve gamja files and proxy `/socket` to soju.
+Add a WebSocket listener to soju, e.g. `listen ws+insecure://127.0.0.1:8080`.
+Then configure your reverse proxy to serve gamja files and proxy `/socket` to
+soju.
 
 ## [webircgateway]
 
