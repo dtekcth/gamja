@@ -643,7 +643,38 @@ export default class Buffer extends Component {
 			`;
 		}
 		function createFoldGroup(msgs) {
-			// Filter out PART → JOIN pairs
+			// Merge NICK change chains
+			let nickChanges = new Map();
+			let mergedMsgs = [];
+			for (let msg of msgs) {
+				let keep = true;
+				switch (msg.command) {
+				case "PART":
+				case "QUIT":
+					nickChanges.delete(msg.prefix.name);
+					break;
+				case "NICK":
+					let prev = nickChanges.get(msg.prefix.name);
+					if (!prev) {
+						// Future NICK messages may mutate this one
+						msg = { ...msg };
+						nickChanges.set(msg.params[0], msg);
+						break;
+					}
+
+					prev.params = msg.params;
+					nickChanges.delete(msg.prefix.name);
+					nickChanges.set(msg.params[0], prev);
+					keep = false;
+					break;
+				}
+				if (keep) {
+					mergedMsgs.push(msg);
+				}
+			}
+			msgs = mergedMsgs;
+
+			// Filter out PART → JOIN pairs, as well as no-op NICKs from previous step
 			let partIndexes = new Map();
 			let keep = [];
 			msgs.forEach((msg, i) => {
@@ -653,6 +684,8 @@ export default class Buffer extends Component {
 				if (msg.command === "JOIN" && partIndexes.has(msg.prefix.name)) {
 					keep[partIndexes.get(msg.prefix.name)] = false;
 					partIndexes.delete(msg.prefix.name);
+					keep.push(false);
+				} else if (msg.command === "NICK" && msg.prefix.name == msg.params[0]) {
 					keep.push(false);
 				} else {
 					keep.push(true);
