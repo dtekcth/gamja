@@ -1967,6 +1967,11 @@ export default class App extends Component {
 			}
 		}
 
+		let activeClient = null;
+		if (activeBuffer) {
+			activeClient = this.clients.get(activeBuffer.server);
+		}
+
 		if (this.state.connectForm) {
 			let status = activeServer ? activeServer.status : ServerStatus.DISCONNECTED;
 			let connecting = status === ServerStatus.CONNECTING || status === ServerStatus.REGISTERING;
@@ -2208,6 +2213,7 @@ export default class App extends Component {
 			${memberList}
 			<${Composer}
 				ref=${this.composer}
+				client=${activeClient}
 				readOnly=${composerReadOnly}
 				onSubmit=${this.handleComposerSubmit}
 				autocomplete=${this.autocomplete}

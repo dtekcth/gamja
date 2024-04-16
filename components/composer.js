@@ -1,5 +1,16 @@
 import { html, Component, createRef } from "../lib/index.js";
 
+function encodeContentDisposition(filename) {
+	// Encode filename according to RFC 5987 if necessary. Note,
+	// encodeURIComponent will percent-encode a superset of attr-char.
+	let encodedFilename = encodeURIComponent(filename);
+	if (encodedFilename === filename) {
+		return "attachment; filename=\"" + filename + "\"";
+	} else {
+		return "attachment; filename*=UTF-8''" + encodedFilename;
+	}
+}
+
 export default class Composer extends Component {
 	state = {
 		text: "",
@@ -13,6 +24,7 @@ export default class Composer extends Component {
 		this.handleInput = this.handleInput.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleInputKeyDown = this.handleInputKeyDown.bind(this);
+		this.handleInputPaste = this.handleInputPaste.bind(this);
 		this.handleWindowKeyDown = this.handleWindowKeyDown.bind(this);
 		this.handleWindowPaste = this.handleWindowPaste.bind(this);
 	}
@@ -116,6 +128,71 @@ export default class Composer extends Component {
 		this.setState({ text: autocomplete.text });
 	}
 
+	async handleInputPaste(event) {
+		let client = this.props.client;
+		if (!event.clipboardData.files.length || !client || this.props.readOnly) {
+			return;
+		}
+
+		let endpoint = client.isupport.filehost();
+		if (!endpoint) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopImmediatePropagation();
+
+		// TODO: support more than one file
+		let file = event.clipboardData.files.item(0);
+
+		let auth;
+		if (client.params.saslPlain) {
+			let params = client.params.saslPlain;
+			auth = "Basic " + btoa(params.username + ":" + params.password);
+		} else if (client.params.saslOauthBearer) {
+			auth = "Bearer " + client.params.saslOauthBearer.token;
+		}
+
+		let headers = {
+			"Content-Length": file.size,
+			"Content-Disposition": encodeContentDisposition(file.name),
+		};
+		if (file.type) {
+			headers["Content-Type"] = file.type;
+		}
+		if (auth) {
+			headers["Authorization"] = auth;
+		}
+
+		// TODO: show a loading UI while uploading
+		// TODO: show a cancel button
+		let resp = await fetch(endpoint, {
+			method: "POST",
+			body: file,
+			headers,
+			credentials: "include",
+		});
+
+		if (!resp.ok) {
+			throw new Error(`HTTP request failed (${resp.status})`);
+		}
+
+		let loc = resp.headers.get("Location");
+		if (!loc) {
+			throw new Error("filehost response missing Location header field");
+		}
+
+		let uploadURL = new URL(loc, endpoint);
+
+		this.setState((state) => {
+			if (state.text) {
+				return { text: state.text + " " + uploadURL.toString() };
+			} else {
+				return { text: uploadURL.toString() };
+			}
+		});
+	}
+
 	handleWindowKeyDown(event) {
 		// If an <input> or <button> is focused, ignore.
 		if (document.activeElement && document.activeElement !== document.body) {
@@ -170,6 +247,11 @@ export default class Composer extends Component {
 		}
 
 		if (!this.textInput.current) {
+			return;
+		}
+
+		if (event.clipboardData.files.length > 0) {
+			this.handleInputPaste(event);
 			return;
 		}
 
@@ -228,6 +310,7 @@ export default class Composer extends Component {
 					placeholder=${placeholder}
 					enterkeyhint="send"
 					onKeyDown=${this.handleInputKeyDown}
+					onPaste=${this.handleInputPaste}
 					maxlength=${this.props.maxLen}
 				/>
 			</form>
