@@ -849,6 +849,12 @@ export default class App extends Component {
 		let client = this.clients.get(serverID);
 		let chatHistoryBatch = irc.findBatchByType(msg, "chathistory");
 
+		// Reply triggered by some command sent by us, not worth displaying to
+		// the user
+		if (msg.internal) {
+			return [];
+		}
+
 		let target, channel, affectedBuffers;
 		switch (msg.command) {
 		case "MODE":
