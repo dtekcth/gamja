@@ -537,17 +537,7 @@ export default class App extends Component {
 			if (!buf) {
 				return;
 			}
-
-			let client = this.clients.get(buf.server);
-			let stored = this.bufferStore.get({ name: buf.name, server: client.params });
-			let prevReadReceipt = getReceipt(stored, ReceiptType.READ);
-			// TODO: only mark as read if user scrolled at the bottom
-			let update = State.updateBuffer(state, buf.id, {
-				unread: Unread.NONE,
-				prevReadReceipt,
-			});
-
-			return { ...update, activeBuffer: buf.id };
+			return { activeBuffer: buf.id };
 		}, () => {
 			if (!buf) {
 				return;
@@ -555,6 +545,46 @@ export default class App extends Component {
 
 			if (this.buffer.current) {
 				this.buffer.current.focus();
+			}
+
+			let server = this.state.servers.get(buf.server);
+			if (buf.type === BufferType.NICK && !server.users.has(buf.name)) {
+				this.whoUserBuffer(buf.name, buf.server);
+			}
+
+			if (buf.type === BufferType.CHANNEL && !buf.hasInitialWho) {
+				this.whoChannelBuffer(buf.name, buf.server);
+			}
+
+			if (buf.type !== BufferType.SERVER) {
+				document.title = buf.name + ' · ' + this.baseTitle;
+			} else {
+				document.title = this.baseTitle;
+			}
+		});
+
+		// TODO: only mark as read if user scrolled at the bottom
+		this.markBufferAsRead(id);
+	}
+
+	markBufferAsRead(id) {
+		let buf;
+		this.setState((state) => {
+			buf = State.getBuffer(state, id);
+			if (!buf) {
+				return;
+			}
+
+			let client = this.clients.get(buf.server);
+			let stored = this.bufferStore.get({ name: buf.name, server: client.params });
+			let prevReadReceipt = getReceipt(stored, ReceiptType.READ);
+			return State.updateBuffer(state, buf.id, {
+				unread: Unread.NONE,
+				prevReadReceipt,
+			});
+		}, () => {
+			if (!buf) {
+				return;
 			}
 
 			let client = this.clients.get(buf.server);
@@ -576,21 +606,6 @@ export default class App extends Component {
 				if (this.bufferStore.put(stored)) {
 					this.sendReadReceipt(client, stored);
 				}
-			}
-
-			let server = this.state.servers.get(buf.server);
-			if (buf.type === BufferType.NICK && !server.users.has(buf.name)) {
-				this.whoUserBuffer(buf.name, buf.server);
-			}
-
-			if (buf.type === BufferType.CHANNEL && !buf.hasInitialWho) {
-				this.whoChannelBuffer(buf.name, buf.server);
-			}
-
-			if (buf.type !== BufferType.SERVER) {
-				document.title = buf.name + ' · ' + this.baseTitle;
-			} else {
-				document.title = this.baseTitle;
 			}
 		});
 	}
