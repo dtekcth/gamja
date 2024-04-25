@@ -493,7 +493,9 @@ export default class App extends Component {
 
 		let stored = this.bufferStore.get({ name, server: client.params });
 		if (client.caps.enabled.has("draft/chathistory") && stored) {
-			this.setBufferState({ server: serverID, name }, { unread: stored.unread });
+			this.setBufferState({ server: serverID, name }, { unread: stored.unread }, () => {
+				this.updateDocumentTitle();
+			});
 		}
 
 		this.bufferStore.put({
@@ -603,6 +605,8 @@ export default class App extends Component {
 					this.sendReadReceipt(client, stored);
 				}
 			}
+
+			this.updateDocumentTitle();
 		});
 	}
 
@@ -617,6 +621,13 @@ export default class App extends Component {
 			bouncerNetwork = this.state.bouncerNetworks.get(server.bouncerNetID);
 		}
 
+		let numUnread = 0;
+		for (let buffer of this.state.buffers.values()) {
+			if (Unread.compare(buffer.unread, Unread.HIGHLIGHT) >= 0) {
+				numUnread++;
+			}
+		}
+
 		let parts = [];
 		if (buf && buf.type !== BufferType.SERVER) {
 			parts.push(buf.name);
@@ -626,7 +637,13 @@ export default class App extends Component {
 		}
 		parts.push(this.baseTitle);
 
-		document.title = parts.join(" · ");
+		let title = "";
+		if (numUnread > 0) {
+			title = `(${numUnread}) `;
+		}
+		title += parts.join(" · ");
+
+		document.title = title;
 	}
 
 	prepareChatMessage(serverID, msg) {
@@ -774,6 +791,10 @@ export default class App extends Component {
 				this.sendReadReceipt(client, stored);
 			}
 			return { unread, prevReadReceipt };
+		}, () => {
+			if (msgUnread === Unread.HIGHLIGHT) {
+				this.updateDocumentTitle();
+			}
 		});
 	}
 
@@ -1250,6 +1271,7 @@ export default class App extends Component {
 					closed,
 					receipts: { [ReceiptType.READ]: readReceipt },
 				});
+				this.updateDocumentTitle();
 			});
 			break;
 		default:

@@ -40,6 +40,8 @@ export const keybindings = [
 					});
 				});
 				return { buffers };
+			}, () => {
+				app.updateDocumentTitle();
 			});
 		},
 	},
