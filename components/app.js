@@ -556,11 +556,7 @@ export default class App extends Component {
 				this.whoChannelBuffer(buf.name, buf.server);
 			}
 
-			if (buf.type !== BufferType.SERVER) {
-				document.title = buf.name + ' · ' + this.baseTitle;
-			} else {
-				document.title = this.baseTitle;
-			}
+			this.updateDocumentTitle();
 		});
 
 		// TODO: only mark as read if user scrolled at the bottom
@@ -608,6 +604,15 @@ export default class App extends Component {
 				}
 			}
 		});
+	}
+
+	updateDocumentTitle() {
+		let buf = State.getBuffer(this.state, this.state.activeBuffer);
+		if (buf && buf.type !== BufferType.SERVER) {
+			document.title = buf.name + ' · ' + this.baseTitle;
+		} else {
+			document.title = this.baseTitle;
+		}
 	}
 
 	prepareChatMessage(serverID, msg) {
