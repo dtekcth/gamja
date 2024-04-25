@@ -734,7 +734,7 @@ export default class App extends Component {
 			let prevReadReceipt = buf.prevReadReceipt;
 			let receipts = { [ReceiptType.DELIVERED]: receiptFromMessage(msg) };
 
-			if (this.state.activeBuffer !== buf.id) {
+			if (this.state.activeBuffer !== buf.id || !document.hasFocus()) {
 				unread = Unread.union(unread, msgUnread);
 			} else {
 				receipts[ReceiptType.READ] = receiptFromMessage(msg);
@@ -1943,6 +1943,11 @@ export default class App extends Component {
 	}
 
 	handleWindowFocus() {
+		if (this.state.activeBuffer) {
+			// TODO: only do this if scrolled at the bottom
+			this.markBufferAsRead(this.state.activeBuffer);
+		}
+
 		// When the user focuses gamja, send a PING to make sure we detect any
 		// network errors ASAP
 
