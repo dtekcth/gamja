@@ -608,11 +608,25 @@ export default class App extends Component {
 
 	updateDocumentTitle() {
 		let buf = State.getBuffer(this.state, this.state.activeBuffer);
-		if (buf && buf.type !== BufferType.SERVER) {
-			document.title = buf.name + ' · ' + this.baseTitle;
-		} else {
-			document.title = this.baseTitle;
+		let server;
+		if (buf) {
+			server = this.state.servers.get(buf.server);
 		}
+		let bouncerNetwork;
+		if (server.bouncerNetID) {
+			bouncerNetwork = this.state.bouncerNetworks.get(server.bouncerNetID);
+		}
+
+		let parts = [];
+		if (buf && buf.type !== BufferType.SERVER) {
+			parts.push(buf.name);
+		}
+		if (bouncerNetwork) {
+			parts.push(getServerName(server, bouncerNetwork));
+		}
+		parts.push(this.baseTitle);
+
+		document.title = parts.join(" · ");
 	}
 
 	prepareChatMessage(serverID, msg) {
