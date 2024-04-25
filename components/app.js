@@ -539,7 +539,13 @@ export default class App extends Component {
 			if (!buf) {
 				return;
 			}
-			return { activeBuffer: buf.id };
+
+			let client = this.clients.get(buf.server);
+			let stored = this.bufferStore.get({ name: buf.name, server: client.params });
+			let prevReadReceipt = getReceipt(stored, ReceiptType.READ);
+			let update = State.updateBuffer(state, buf.id, { prevReadReceipt });
+
+			return { activeBuffer: buf.id, ...update };
 		}, () => {
 			if (!buf) {
 				return;
@@ -572,14 +578,7 @@ export default class App extends Component {
 			if (!buf) {
 				return;
 			}
-
-			let client = this.clients.get(buf.server);
-			let stored = this.bufferStore.get({ name: buf.name, server: client.params });
-			let prevReadReceipt = getReceipt(stored, ReceiptType.READ);
-			return State.updateBuffer(state, buf.id, {
-				unread: Unread.NONE,
-				prevReadReceipt,
-			});
+			return State.updateBuffer(state, buf.id, { unread: Unread.NONE });
 		}, () => {
 			if (!buf) {
 				return;
