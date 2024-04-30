@@ -933,6 +933,14 @@ export default class App extends Component {
 				}
 			}
 
+			let allowedPrefixes = client.isupport.statusMsg();
+			if (allowedPrefixes) {
+				let parts = irc.parseTargetPrefix(target, allowedPrefixes);
+				if (client.isChannel(parts.name)) {
+					target = parts.name;
+				}
+			}
+
 			// Don't open a new buffer if this is just a NOTICE or a garbage
 			// CTCP message
 			let openNewBuffer = true;
@@ -948,13 +956,6 @@ export default class App extends Component {
 				target = SERVER_BUFFER;
 			}
 
-			let allowedPrefixes = client.isupport.statusMsg();
-			if (allowedPrefixes) {
-				let parts = irc.parseTargetPrefix(target, allowedPrefixes);
-				if (client.isChannel(parts.name)) {
-					target = parts.name;
-				}
-			}
 			return [target];
 		case "JOIN":
 			channel = msg.params[0];
