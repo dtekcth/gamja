@@ -4,6 +4,12 @@ A simple IRC web client.
 
 ![screenshot](https://l.sr.ht/7Npm.png)
 
+## Fork notes
+
+This is a fork of [gamja](https://git.sr.ht/~emersion/gamja).
+The only reason for the fork is to build a docker image.
+Please don't change stuff.
+
 ## Usage
 
 Requires an IRC WebSocket server.
