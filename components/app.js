@@ -437,6 +437,9 @@ export default class App extends Component {
 					clientSecret: this.config.oauth2.client_secret,
 				});
 				username = data.username;
+				if (!username) {
+					console.warn("Username missing from OAuth 2.0 token introspection response");
+				}
 			} catch (err) {
 				console.warn("Failed to introspect OAuth 2.0 token:", err);
 			}
