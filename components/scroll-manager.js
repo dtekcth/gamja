@@ -11,7 +11,7 @@ export default class ScrollManager extends Component {
 
 	isAtBottom() {
 		let target = this.props.target.current;
-		return target.scrollTop >= target.scrollHeight - target.offsetHeight;
+		return Math.abs(target.scrollHeight - target.clientHeight - target.scrollTop) <= 10;
 	}
 
 	saveScrollPosition(scrollKey) {
