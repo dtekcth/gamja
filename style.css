@@ -154,10 +154,6 @@ button.danger:hover {
 	padding: 2px 10px;
 	box-sizing: border-box;
 }
-#buffer-list li.active a {
-	color: white;
-	background-color: var(--gray);
-}
 #buffer-list li.error a {
 	color: red;
 }
@@ -166,6 +162,10 @@ button.danger:hover {
 }
 #buffer-list li.unread-highlight a {
 	color: #22009b;
+}
+#buffer-list li.active a {
+	color: white;
+	background-color: var(--gray);
 }
 #buffer-list li:not(.type-server) a {
 	padding-left: 20px;
@@ -591,15 +591,15 @@ ul.switcher-list .server {
 		scrollbar-color: var(--gray) transparent;
 	}
 
-	#buffer-list li.active a {
-		color: var(--sidebar-background);
-		background-color: white;
-	}
 	#buffer-list li.unread-message a {
 		color: var(--green);
 	}
 	#buffer-list li.unread-highlight a {
 		color: #0062cc;
+	}
+	#buffer-list li.active a {
+		color: var(--sidebar-background);
+		background-color: white;
 	}
 
 	#buffer-header .status-gone {
