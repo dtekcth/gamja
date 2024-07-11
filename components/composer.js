@@ -25,6 +25,8 @@ export default class Composer extends Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleInputKeyDown = this.handleInputKeyDown.bind(this);
 		this.handleInputPaste = this.handleInputPaste.bind(this);
+		this.handleDragOver = this.handleDragOver.bind(this);
+		this.handleDrop = this.handleDrop.bind(this);
 		this.handleWindowKeyDown = this.handleWindowKeyDown.bind(this);
 		this.handleWindowPaste = this.handleWindowPaste.bind(this);
 	}
@@ -128,22 +130,24 @@ export default class Composer extends Component {
 		this.setState({ text: autocomplete.text });
 	}
 
-	async handleInputPaste(event) {
+	canUploadFiles() {
 		let client = this.props.client;
-		if (!event.clipboardData.files.length || !client || this.props.readOnly) {
+		return client && client.isupport.filehost() && !this.props.readOnly;
+	}
+
+	async uploadFiles(fileList) {
+		if (fileList.length === 0 || !this.canUploadFiles()) {
 			return;
 		}
 
+		let client = this.props.client;
 		let endpoint = client.isupport.filehost();
 		if (!endpoint) {
 			return;
 		}
 
-		event.preventDefault();
-		event.stopImmediatePropagation();
-
 		// TODO: support more than one file
-		let file = event.clipboardData.files.item(0);
+		let file = fileList.item(0);
 
 		let auth;
 		if (client.params.saslPlain) {
@@ -191,6 +195,42 @@ export default class Composer extends Component {
 				return { text: uploadURL.toString() };
 			}
 		});
+	}
+
+	async handleInputPaste(event) {
+		if (event.clipboardData.files.length === 0 || !this.canUploadFiles()) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopImmediatePropagation();
+
+		await this.uploadFiles(event.clipboardData.files);
+	}
+
+	handleDragOver(event) {
+		if (event.dataTransfer.items.length === 0 || !this.canUploadFiles()) {
+			return;
+		}
+
+		for (let item of event.dataTransfer.items) {
+			if (item.kind !== "file") {
+				return;
+			}
+		}
+
+		event.preventDefault();
+	}
+
+	async handleDrop(event) {
+		if (event.dataTransfer.files.length === 0 || !this.canUploadFiles()) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopImmediatePropagation();
+
+		await this.uploadFiles(event.dataTransfer.files);
 	}
 
 	handleWindowKeyDown(event) {
@@ -311,6 +351,8 @@ export default class Composer extends Component {
 					enterkeyhint="send"
 					onKeyDown=${this.handleInputKeyDown}
 					onPaste=${this.handleInputPaste}
+					onDragOver=${this.handleDragOver}
+					onDrop=${this.handleDrop}
 					maxlength=${this.props.maxLen}
 				/>
 			</form>
