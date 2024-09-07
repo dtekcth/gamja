@@ -199,8 +199,7 @@ class LogLine extends Component {
 			content = html`
 				* ${createNick(msg.prefix.name)} sets mode ${msg.params.slice(1).join(" ")}
 			`;
-			// TODO: case-mapping
-			if (buf.name !== target) {
+			if (server.cm(buf.name) !== server.cm(target)) {
 				content = html`${content} on ${target}`;
 			}
 			break;
