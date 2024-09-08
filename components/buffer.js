@@ -196,8 +196,78 @@ class LogLine extends Component {
 			break;
 		case "MODE":
 			target = msg.params[0];
+			let modeStr = msg.params[1];
+
+			let user = html`* ${createNick(msg.prefix.name)}`;
+
+			// TODO: use irc.forEachChannelModeUpdate()
+			if (buf.type == BufferType.CHANNEL && modeStr.length === 2 && server.cm(buf.name) === server.cm(target)) {
+				let plusMinus = modeStr[0];
+				let mode = modeStr[1];
+				let arg = msg.params[2];
+
+				let verb;
+				switch (mode) {
+				case "b":
+					verb = plusMinus === "+" ? "added" : "removed";
+					content = html`${user} has ${verb} a ban on ${arg}`;
+					break;
+				case "e":
+					verb = plusMinus === "+" ? "added" : "removed";
+					content = html`${user} has ${verb} a ban exemption on ${arg}`;
+					break;
+				case "l":
+					if (plusMinus === "+") {
+						content = html`${user} has set the channel user limit to ${arg}`;
+					} else {
+						content = html`${user} has unset the channel user limit`;
+					}
+					break;
+				case "i":
+					verb = plusMinus === "+" ? "marked": "unmarked";
+					content = html`${user} has ${verb} as invite-only`;
+					break;
+				case "m":
+					verb = plusMinus === "+" ? "marked": "unmarked";
+					content = html`${user} has ${verb} as moderated`;
+					break;
+				case "s":
+					verb = plusMinus === "+" ? "marked": "unmarked";
+					content = html`${user} has ${verb} as secret`;
+					break;
+				case "t":
+					verb = plusMinus === "+" ? "locked": "unlocked";
+					content = html`${user} has ${verb} the channel topic`;
+					break;
+				case "n":
+					verb = plusMinus === "+" ? "allowed": "denied";
+					content = html`${user} has ${verb} external messages to this channel`;
+					break;
+				}
+				if (content) {
+					break;
+				}
+
+				// Channel membership modes
+				let membership;
+				for (let prefix in irc.STD_MEMBERSHIP_MODES) {
+					if (irc.STD_MEMBERSHIP_MODES[prefix] === mode) {
+						membership = irc.STD_MEMBERSHIP_NAMES[prefix];
+						break;
+					}
+				}
+				if (membership && arg) {
+					let verb = plusMinus === "+" ? "granted" : "revoked";
+					let preposition = plusMinus === "+" ? "to" : "from";
+					content = html`
+						${user} has ${verb} ${membership} privileges ${preposition} ${createNick(arg)}
+					`;
+					break;
+				}
+			}
+
 			content = html`
-				* ${createNick(msg.prefix.name)} sets mode ${msg.params.slice(1).join(" ")}
+				${user} sets mode ${msg.params.slice(1).join(" ")}
 			`;
 			if (server.cm(buf.name) !== server.cm(target)) {
 				content = html`${content} on ${target}`;
