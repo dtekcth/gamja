@@ -302,7 +302,7 @@ button.danger:hover {
 .membership.admin {
 	color: blue;
 }
-.membership.op {
+.membership.operator {
 	color: var(--green);
 }
 .membership.halfop {
