@@ -198,7 +198,7 @@ class LogLine extends Component {
 			target = msg.params[0];
 			let modeStr = msg.params[1];
 
-			let user = html`* ${createNick(msg.prefix.name)}`;
+			let user = html`${createNick(msg.prefix.name)}`;
 
 			// TODO: use irc.forEachChannelModeUpdate()
 			if (buf.type == BufferType.CHANNEL && modeStr.length === 2 && server.cm(buf.name) === server.cm(target)) {
