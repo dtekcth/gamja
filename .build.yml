@@ -10,7 +10,12 @@ tasks:
 - setup: |
     cd gamja
     npm install --include=dev
+- build: |
+    cd gamja
     npm run build
+- lint: |
+    cd gamja
+    npm run lint
 - deploy: |
     cd gamja/dist
     [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/master)" ] || complete-build
