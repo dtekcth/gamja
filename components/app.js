@@ -55,7 +55,7 @@ function isProduction() {
 	// NODE_ENV is set by the Parcel build system
 	try {
 		return process.env.NODE_ENV === "production";
-	} catch (err) {
+	} catch (_err) {
 		return false;
 	}
 }
@@ -1960,7 +1960,7 @@ export default class App extends Component {
 
 	handleOpenSettingsClick() {
 		let showProtocolHandler = false;
-		for (let [id, client] of this.clients) {
+		for (let [_id, client] of this.clients) {
 			if (client.caps.enabled.has("soju.im/bouncer-networks")) {
 				showProtocolHandler = true;
 				break;

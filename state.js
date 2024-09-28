@@ -486,7 +486,7 @@ export const State = {
 			channel = msg.params[0];
 
 			if (client.isMyNick(msg.prefix.name)) {
-				let [id, update] = State.createBuffer(state, channel, serverID, client);
+				let [_id, update] = State.createBuffer(state, channel, serverID, client);
 				state = { ...state, ...update };
 			}
 
