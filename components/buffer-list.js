@@ -1,6 +1,6 @@
 import * as irc from "../lib/irc.js";
 import { strip as stripANSI } from "../lib/ansi.js";
-import { html, Component } from "../lib/index.js";
+import { html } from "../lib/index.js";
 import { BufferType, Unread, ServerStatus, getBufferURL, getServerName } from "../state.js";
 
 function BufferItem(props) {

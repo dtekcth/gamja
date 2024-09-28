@@ -1,4 +1,4 @@
-import { html, Component } from "../lib/index.js";
+import { html } from "../lib/index.js";
 import * as irc from "../lib/irc.js";
 
 export default function Membership(props) {

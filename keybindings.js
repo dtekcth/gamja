@@ -1,4 +1,4 @@
-import { ReceiptType, Unread, BufferType, SERVER_BUFFER, receiptFromMessage } from "./state.js";
+import { ReceiptType, Unread, BufferType, receiptFromMessage } from "./state.js";
 
 function getSiblingBuffer(buffers, bufID, delta) {
 	let bufList = Array.from(buffers.values());

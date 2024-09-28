@@ -151,7 +151,6 @@ class LogLine extends Component {
 				content = html`${prefix}${createNick(msg.prefix.name)}${suffix} ${linkify(stripANSI(text), onChannelClick)}`;
 			}
 
-			let status = null;
 			let allowedPrefixes = server.statusMsg;
 			if (target !== buf.name && allowedPrefixes) {
 				let parts = irc.parseTargetPrefix(target, allowedPrefixes);
@@ -673,7 +672,6 @@ export default class Buffer extends Component {
 		}
 
 		let server = this.props.server;
-		let bouncerNetwork = this.props.bouncerNetwork;
 		let settings = this.props.settings;
 		let serverName = server.name;
 

@@ -1,4 +1,4 @@
-import { html, Component } from "../lib/index.js";
+import { Component } from "../lib/index.js";
 
 let store = new Map();
 

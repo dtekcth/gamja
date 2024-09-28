@@ -1,4 +1,4 @@
-import { html, Component } from "../lib/index.js";
+import { html } from "../lib/index.js";
 import { keybindings } from "../keybindings.js";
 import commands from "../commands.js";
 
