@@ -1142,6 +1142,7 @@ export default class App extends Component {
 				this.openURL(this.autoOpenURL);
 				this.autoOpenURL = null;
 			}
+			break;
 		case "JOIN":
 			channel = msg.params[0];
 
