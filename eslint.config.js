@@ -20,6 +20,7 @@ export default [
 				caughtErrorsIgnorePattern: "^_",
 				destructuredArrayIgnorePattern: "^_",
 			}],
+			"no-var": "error",
 		},
 	},
 ];
