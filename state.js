@@ -452,7 +452,6 @@ export const State = {
 				});
 				return { members };
 			});
-			break;
 		case irc.RPL_ENDOFWHO:
 			target = msg.params[1];
 			if (msg.list.length == 0 && !client.isChannel(target) && target.indexOf("*") < 0) {
@@ -483,7 +482,6 @@ export const State = {
 					return { users };
 				});
 			}
-			break;
 		case "JOIN":
 			channel = msg.params[0];
 
