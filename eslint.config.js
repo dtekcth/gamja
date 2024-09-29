@@ -25,6 +25,7 @@ export default [
 			"no-var": "error",
 			"@stylistic/js/indent": ["warn", "tab"],
 			"@stylistic/js/quotes": ["warn", "double"],
+			"@stylistic/js/semi": "warn",
 		},
 	},
 ];

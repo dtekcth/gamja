@@ -116,7 +116,7 @@ export default {
 		usage: "[message]",
 		description: "Set away message",
 		execute: (app, args) => {
-			const params = []
+			const params = [];
 			if (args.length) {
 				params.push(args.join(" "));
 			}
