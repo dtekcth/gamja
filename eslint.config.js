@@ -1,5 +1,6 @@
 import globals from "globals";
 import js from "@eslint/js";
+import stylisticJs from "@stylistic/eslint-plugin-js";
 
 export default [
 	{
@@ -13,6 +14,7 @@ export default [
 				"process": "readonly",
 			},
 		},
+		plugins: { "@stylistic/js": stylisticJs },
 		rules: {
 			"no-case-declarations": "off",
 			"no-unused-vars": ["error", {
@@ -21,6 +23,8 @@ export default [
 				destructuredArrayIgnorePattern: "^_",
 			}],
 			"no-var": "error",
+			"@stylistic/js/indent": ["warn", "tab"],
+			"@stylistic/js/quotes": ["warn", "double"],
 		},
 	},
 ];
