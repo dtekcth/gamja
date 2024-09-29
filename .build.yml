@@ -15,7 +15,7 @@ tasks:
     npm run build
 - lint: |
     cd gamja
-    npm run lint
+    npm run -- lint --max-warnings 0
 - deploy: |
     cd gamja/dist
     [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/master)" ] || complete-build
