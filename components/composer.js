@@ -135,19 +135,9 @@ export default class Composer extends Component {
 		return client && client.isupport.filehost() && !this.props.readOnly;
 	}
 
-	async uploadFiles(fileList) {
-		if (fileList.length === 0 || !this.canUploadFiles()) {
-			return;
-		}
-
+	async uploadFile(file) {
 		let client = this.props.client;
 		let endpoint = client.isupport.filehost();
-		if (!endpoint) {
-			return;
-		}
-
-		// TODO: support more than one file
-		let file = fileList.item(0);
 
 		let auth;
 		if (client.params.saslPlain) {
@@ -186,13 +176,22 @@ export default class Composer extends Component {
 			throw new Error("filehost response missing Location header field");
 		}
 
-		let uploadURL = new URL(loc, endpoint);
+		return new URL(loc, endpoint);
+	}
+
+	async uploadFileList(fileList) {
+		let promises = [];
+		for (let file of fileList) {
+			promises.push(this.uploadFile(file));
+		}
+
+		let urls = await Promise.all(promises);
 
 		this.setState((state) => {
 			if (state.text) {
-				return { text: state.text + " " + uploadURL.toString() };
+				return { text: state.text + " " + urls.join(" ") };
 			} else {
-				return { text: uploadURL.toString() };
+				return { text: urls.join(" ") };
 			}
 		});
 	}
@@ -205,7 +204,7 @@ export default class Composer extends Component {
 		event.preventDefault();
 		event.stopImmediatePropagation();
 
-		await this.uploadFiles(event.clipboardData.files);
+		await this.uploadFileList(event.clipboardData.files);
 	}
 
 	handleDragOver(event) {
@@ -230,7 +229,7 @@ export default class Composer extends Component {
 		event.preventDefault();
 		event.stopImmediatePropagation();
 
-		await this.uploadFiles(event.dataTransfer.files);
+		await this.uploadFileList(event.dataTransfer.files);
 	}
 
 	handleWindowKeyDown(event) {
