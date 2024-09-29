@@ -26,6 +26,7 @@ export default [
 			"@stylistic/js/indent": ["warn", "tab"],
 			"@stylistic/js/quotes": ["warn", "double"],
 			"@stylistic/js/semi": "warn",
+			"@stylistic/js/comma-dangle": ["warn", "always-multiline"],
 		},
 	},
 ];
