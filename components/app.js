@@ -1716,7 +1716,7 @@ export default class App extends Component {
 
 		if (prefix.startsWith("/")) {
 			let repl = fromList(Object.keys(commands), prefix.slice(1));
-			return repl.map(cmd => "/" + cmd);
+			return repl.map((cmd) => "/" + cmd);
 		}
 
 		// TODO: consider using the CHANTYPES ISUPPORT token here

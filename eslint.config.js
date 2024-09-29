@@ -27,6 +27,7 @@ export default [
 			"@stylistic/js/quotes": ["warn", "double"],
 			"@stylistic/js/semi": "warn",
 			"@stylistic/js/comma-dangle": ["warn", "always-multiline"],
+			"@stylistic/js/arrow-parens": "warn",
 		},
 	},
 ];
