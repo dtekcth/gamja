@@ -3,7 +3,7 @@ packages:
 - npm
 - rsync
 sources:
-- https://git.sr.ht/~emersion/gamja
+- https://codeberg.org/emersion/gamja.git
 secrets:
 - 7a146c8e-aeb4-46e7-99bf-05af7486bbe9 # deploy SSH key
 tasks:

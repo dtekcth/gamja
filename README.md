@@ -37,8 +37,8 @@ gamja can be configured via a [configuration file] and via [URL parameters].
 
 ## Contributing
 
-Send patches on [Codeberg] or on the [mailing list], report bugs on the
-[issue tracker]. Discuss in [#soju on Libera Chat].
+Send patches on [Codeberg], report bugs on the [issue tracker]. Discuss
+in [#soju on Libera Chat].
 
 ## License
 
@@ -46,9 +46,8 @@ AGPLv3, see LICENSE.
 
 Copyright (C) 2020 The gamja Contributors
 
-[gamja]: https://sr.ht/~emersion/gamja/
+[gamja]: https://codeberg.org/emersion/gamja
 [Codeberg]: https://codeberg.org/emersion/gamja
-[mailing list]: https://lists.sr.ht/~emersion/public-inbox
 [issue tracker]: https://todo.sr.ht/~emersion/gamja
 [Parcel]: https://parceljs.org
 [configure an HTTP server]: doc/setup.md
