@@ -48,13 +48,13 @@ export default class ScrollManager extends Component {
 			}
 		}
 
-		if (target.scrollTop == 0) {
+		if (target.scrollTop === 0) {
 			this.props.onScrollTop();
 		}
 	}
 
 	handleScroll() {
-		if (this.props.target.current.scrollTop == 0) {
+		if (this.props.target.current.scrollTop === 0) {
 			this.props.onScrollTop();
 		}
 	}

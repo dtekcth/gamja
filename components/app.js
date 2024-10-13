@@ -94,7 +94,7 @@ function splitHostPort(str) {
 function fillConnectParams(params) {
 	let host = window.location.host || "localhost:8080";
 	let proto = "wss:";
-	if (window.location.protocol != "https:") {
+	if (window.location.protocol !== "https:") {
 		proto = "ws:";
 	}
 	let path = window.location.pathname || "/";
@@ -687,7 +687,7 @@ export default class App extends Component {
 		}
 
 		let msgUnread = Unread.NONE;
-		if ((msg.command == "PRIVMSG" || msg.command == "NOTICE") && !isRead) {
+		if ((msg.command === "PRIVMSG" || msg.command === "NOTICE") && !isRead) {
 			let target = msg.params[0];
 			let text = msg.params[1];
 
@@ -702,7 +702,7 @@ export default class App extends Component {
 				msgUnread = Unread.MESSAGE;
 			}
 
-			if (msgUnread == Unread.HIGHLIGHT && !isDelivered && !irc.parseCTCP(msg)) {
+			if (msgUnread === Unread.HIGHLIGHT && !isDelivered && !irc.parseCTCP(msg)) {
 				let title = "New " + kind + " from " + msg.prefix.name;
 				if (client.isChannel(bufName)) {
 					title += " in " + bufName;
@@ -760,7 +760,7 @@ export default class App extends Component {
 
 		// Open a new buffer if the message doesn't come from me or is a
 		// self-message
-		if ((!client.isMyNick(msg.prefix.name) || client.isMyNick(bufName)) && (msg.command != "PART" && msg.comand != "QUIT" && msg.command != irc.RPL_MONONLINE && msg.command != irc.RPL_MONOFFLINE)) {
+		if ((!client.isMyNick(msg.prefix.name) || client.isMyNick(bufName)) && (msg.command !== "PART" && msg.comand !== "QUIT" && msg.command !== irc.RPL_MONONLINE && msg.command !== irc.RPL_MONOFFLINE)) {
 			this.createBuffer(serverID, bufName);
 		}
 
@@ -978,7 +978,7 @@ export default class App extends Component {
 				affectedBuffers.push(chatHistoryBatch.params[0]);
 			} else {
 				this.state.buffers.forEach((buf) => {
-					if (buf.server != serverID) {
+					if (buf.server !== serverID) {
 						return;
 					}
 					if (!buf.members.has(msg.prefix.name)) {
@@ -996,7 +996,7 @@ export default class App extends Component {
 				affectedBuffers.push(chatHistoryBatch.params[0]);
 			} else {
 				this.state.buffers.forEach((buf) => {
-					if (buf.server != serverID) {
+					if (buf.server !== serverID) {
 						return;
 					}
 					if (!buf.members.has(msg.prefix.name)) {
@@ -1149,7 +1149,7 @@ export default class App extends Component {
 			if (client.isMyNick(msg.prefix.name)) {
 				this.syncBufferUnread(serverID, channel);
 			}
-			if (channel == this.switchToChannel) {
+			if (channel === this.switchToChannel) {
 				this.switchBuffer({ server: serverID, name: channel });
 				this.switchToChannel = null;
 			}
@@ -1279,7 +1279,7 @@ export default class App extends Component {
 			});
 			break;
 		default:
-			if (irc.isError(msg.command) && msg.command != irc.ERR_NOMOTD) {
+			if (irc.isError(msg.command) && msg.command !== irc.ERR_NOMOTD) {
 				let description = msg.params[msg.params.length - 1];
 				this.showError(description);
 			}
@@ -1527,7 +1527,7 @@ export default class App extends Component {
 				servers.delete(buf.server);
 
 				let connectForm = state.connectForm;
-				if (servers.size == 0) {
+				if (servers.size === 0) {
 					connectForm = true;
 				}
 
@@ -1598,7 +1598,7 @@ export default class App extends Component {
 	}
 
 	privmsg(target, text) {
-		if (target == SERVER_BUFFER) {
+		if (target === SERVER_BUFFER) {
 			this.showError("Cannot send message in server buffer");
 			return;
 		}
@@ -1743,7 +1743,7 @@ export default class App extends Component {
 
 	async handleBufferScrollTop() {
 		let buf = this.state.buffers.get(this.state.activeBuffer);
-		if (!buf || buf.type == BufferType.SERVER) {
+		if (!buf || buf.type === BufferType.SERVER) {
 			return;
 		}
 
@@ -1922,7 +1922,7 @@ export default class App extends Component {
 		this.dismissDialog();
 
 		if (this.state.dialogData && this.state.dialogData.id) {
-			if (Object.keys(attrs).length == 0) {
+			if (Object.keys(attrs).length === 0) {
 				return;
 			}
 
@@ -2062,7 +2062,7 @@ export default class App extends Component {
 		let bufferHeader = null;
 		if (activeBuffer) {
 			let activeUser = null;
-			if (activeBuffer.type == BufferType.NICK) {
+			if (activeBuffer.type === BufferType.NICK) {
 				activeUser = activeServer.users.get(activeBuffer.name);
 			}
 
@@ -2086,7 +2086,7 @@ export default class App extends Component {
 		}
 
 		let memberList = null;
-		if (activeBuffer && activeBuffer.type == BufferType.CHANNEL) {
+		if (activeBuffer && activeBuffer.type === BufferType.CHANNEL) {
 			memberList = html`
 				<section
 						id="member-list"

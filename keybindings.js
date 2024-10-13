@@ -121,9 +121,9 @@ export function setup(app) {
 			return;
 		}
 		candidates = candidates.filter((binding) => {
-			return !!binding.altKey == event.altKey && !!binding.ctrlKey == event.ctrlKey;
+			return !!binding.altKey === event.altKey && !!binding.ctrlKey === event.ctrlKey;
 		});
-		if (candidates.length != 1) {
+		if (candidates.length !== 1) {
 			return;
 		}
 		event.preventDefault();

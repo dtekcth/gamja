@@ -86,7 +86,7 @@ const ban = {
 	usage: "[nick]",
 	description: "Ban a user from the channel, or display the current ban list",
 	execute: (app, args) => {
-		if (args.length == 0) {
+		if (args.length === 0) {
 			let activeChannel = getActiveChannel(app);
 			getActiveClient(app).send({
 				command: "MODE",
@@ -142,7 +142,7 @@ export default {
 		description: "Close the current buffer",
 		execute: (app, args) => {
 			let activeBuffer = app.state.buffers.get(app.state.activeBuffer);
-			if (!activeBuffer || activeBuffer.type == BufferType.SERVER) {
+			if (!activeBuffer || activeBuffer.type === BufferType.SERVER) {
 				throw new Error("Not in a user or channel buffer");
 			}
 			app.close(activeBuffer.id);
@@ -297,7 +297,7 @@ export default {
 		usage: "[nick]",
 		description: "Quiet a user in the channel, or display the current quiet list",
 		execute: (app, args) => {
-			if (args.length == 0) {
+			if (args.length === 0) {
 				getActiveClient(app).send({
 					command: "MODE",
 					params: [getActiveChannel(app), "+q"],

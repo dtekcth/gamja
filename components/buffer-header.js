@@ -214,7 +214,7 @@ export default function BufferHeader(props) {
 	}
 
 	let name = props.buffer.name;
-	if (props.buffer.type == BufferType.SERVER) {
+	if (props.buffer.type === BufferType.SERVER) {
 		name = getServerName(props.server, props.bouncerNetwork);
 	}
 

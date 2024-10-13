@@ -16,7 +16,7 @@ function BufferItem(props) {
 	}
 
 	let name = props.buffer.name;
-	if (props.buffer.type == BufferType.SERVER) {
+	if (props.buffer.type === BufferType.SERVER) {
 		name = getServerName(props.server, props.bouncerNetwork);
 	}
 
@@ -25,7 +25,7 @@ function BufferItem(props) {
 	if (props.active) {
 		classes.push("active");
 	}
-	if (props.buffer.unread != Unread.NONE) {
+	if (props.buffer.unread !== Unread.NONE) {
 		classes.push("unread-" + props.buffer.unread);
 	}
 	switch (props.buffer.type) {
@@ -75,7 +75,7 @@ export default function BufferList(props) {
 				bouncerNetwork=${bouncerNetwork}
 				onClick=${() => props.onBufferClick(buf)}
 				onClose=${() => props.onBufferClose(buf)}
-				active=${props.activeBuffer == buf.id}
+				active=${props.activeBuffer === buf.id}
 			/>
 		`;
 	});

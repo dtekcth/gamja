@@ -136,19 +136,19 @@ function updateState(state, updater) {
 }
 
 function isServerBuffer(buf) {
-	return buf.type == BufferType.SERVER;
+	return buf.type === BufferType.SERVER;
 }
 
 /* Returns 1 if a should appear after b, -1 if a should appear before b, or
  * 0 otherwise. */
 function compareBuffers(a, b) {
-	if (a.server != b.server) {
+	if (a.server !== b.server) {
 		return a.server > b.server ? 1 : -1;
 	}
-	if (isServerBuffer(a) != isServerBuffer(b)) {
+	if (isServerBuffer(a) !== isServerBuffer(b)) {
 		return isServerBuffer(b) ? 1 : -1;
 	}
-	if (a.name != b.name) {
+	if (a.name !== b.name) {
 		return a.name.localeCompare(b.name);
 	}
 	return 0;
@@ -178,7 +178,7 @@ function updateMembership(membership, letter, add, client) {
 
 /* Insert a message in an immutable list of sorted messages. */
 function insertMessage(list, msg) {
-	if (list.length == 0) {
+	if (list.length === 0) {
 		return [msg];
 	} else if (!irc.findBatchByType(msg, "chathistory") || list[list.length - 1].tags.time <= msg.tags.time) {
 		return list.concat(msg);
@@ -318,7 +318,7 @@ export const State = {
 		let id = lastBufferID;
 
 		let type;
-		if (name == SERVER_BUFFER) {
+		if (name === SERVER_BUFFER) {
 			type = BufferType.SERVER;
 		} else if (client.isChannel(name)) {
 			type = BufferType.CHANNEL;
@@ -394,7 +394,7 @@ export const State = {
 		case irc.RPL_ISUPPORT:
 			buffers = new Map(state.buffers);
 			state.buffers.forEach((buf) => {
-				if (buf.server != serverID) {
+				if (buf.server !== serverID) {
 					return;
 				}
 				let members = new irc.CaseMapMap(buf.members, client.cm);
@@ -454,7 +454,7 @@ export const State = {
 			});
 		case irc.RPL_ENDOFWHO:
 			target = msg.params[1];
-			if (msg.list.length == 0 && !client.isChannel(target) && target.indexOf("*") < 0) {
+			if (msg.list.length === 0 && !client.isChannel(target) && target.indexOf("*") < 0) {
 				// Not a channel nor a mask, likely a nick
 				return updateUser(target, (user) => {
 					return { offline: true };
@@ -544,7 +544,7 @@ export const State = {
 		case "QUIT":
 			buffers = new Map(state.buffers);
 			state.buffers.forEach((buf) => {
-				if (buf.server != serverID) {
+				if (buf.server !== serverID) {
 					return;
 				}
 				if (!buf.members.has(msg.prefix.name)) {
@@ -570,7 +570,7 @@ export const State = {
 
 			buffers = new Map(state.buffers);
 			state.buffers.forEach((buf) => {
-				if (buf.server != serverID) {
+				if (buf.server !== serverID) {
 					return;
 				}
 				if (!buf.members.has(msg.prefix.name)) {
@@ -648,7 +648,7 @@ export const State = {
 
 			for (let target of targets) {
 				let prefix = irc.parsePrefix(target);
-				let update = updateUser(prefix.name, { offline: msg.command == irc.RPL_MONOFFLINE });
+				let update = updateUser(prefix.name, { offline: msg.command === irc.RPL_MONOFFLINE });
 				state = { ...state, ...update };
 			}
 

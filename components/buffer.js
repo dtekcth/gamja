@@ -134,7 +134,7 @@ class LogLine extends Component {
 
 			let ctcp = irc.parseCTCP(msg);
 			if (ctcp) {
-				if (ctcp.command == "ACTION") {
+				if (ctcp.command === "ACTION") {
 					lineClass = "me-tell";
 					content = html`* ${createNick(msg.prefix.name)} ${linkify(stripANSI(ctcp.param), onChannelClick)}`;
 				} else {
@@ -145,7 +145,7 @@ class LogLine extends Component {
 			} else {
 				lineClass = "talk";
 				let prefix = "<", suffix = ">";
-				if (msg.command == "NOTICE") {
+				if (msg.command === "NOTICE") {
 					prefix = suffix = "-";
 				}
 				content = html`${prefix}${createNick(msg.prefix.name)}${suffix} ${linkify(stripANSI(text), onChannelClick)}`;
@@ -200,7 +200,7 @@ class LogLine extends Component {
 			let user = html`${createNick(msg.prefix.name)}`;
 
 			// TODO: use irc.forEachChannelModeUpdate()
-			if (buf.type == BufferType.CHANNEL && modeStr.length === 2 && server.cm(buf.name) === server.cm(target)) {
+			if (buf.type === BufferType.CHANNEL && modeStr.length === 2 && server.cm(buf.name) === server.cm(target)) {
 				let plusMinus = modeStr[0];
 				let mode = modeStr[1];
 				let arg = msg.params[2];
@@ -357,7 +357,7 @@ class LogLine extends Component {
 			content = html`${createNick(buf.name)} is offline`;
 			break;
 		default:
-			if (irc.isError(msg.command) && msg.command != irc.ERR_NOMOTD) {
+			if (irc.isError(msg.command) && msg.command !== irc.ERR_NOMOTD) {
 				lineClass = "error";
 			}
 			content = html`${msg.command} ${linkify(msg.params.join(" "))}`;
@@ -676,13 +676,13 @@ export default class Buffer extends Component {
 		let serverName = server.name;
 
 		let children = [];
-		if (buf.type == BufferType.SERVER) {
+		if (buf.type === BufferType.SERVER) {
 			children.push(html`<${NotificationNagger}/>`);
 		}
-		if (buf.type == BufferType.SERVER && server.isBouncer && !server.bouncerNetID) {
+		if (buf.type === BufferType.SERVER && server.isBouncer && !server.bouncerNetID) {
 			children.push(html`<${ProtocolHandlerNagger} bouncerName=${serverName}/>`);
 		}
-		if (buf.type == BufferType.SERVER && server.status == ServerStatus.REGISTERED && server.supportsSASLPlain && !server.account) {
+		if (buf.type === BufferType.SERVER && server.status === ServerStatus.REGISTERED && server.supportsSASLPlain && !server.account) {
 			children.push(html`
 				<${AccountNagger}
 					server=${server}
@@ -752,7 +752,7 @@ export default class Buffer extends Component {
 					keep[partIndexes.get(msg.prefix.name)] = false;
 					partIndexes.delete(msg.prefix.name);
 					keep.push(false);
-				} else if (msg.command === "NICK" && msg.prefix.name == msg.params[0]) {
+				} else if (msg.command === "NICK" && msg.prefix.name === msg.params[0]) {
 					keep.push(false);
 				} else {
 					keep.push(true);
@@ -795,7 +795,7 @@ export default class Buffer extends Component {
 				}
 			}
 
-			if (!hasUnreadSeparator && buf.type != BufferType.SERVER && !isMessageBeforeReceipt(msg, buf.prevReadReceipt)) {
+			if (!hasUnreadSeparator && buf.type !== BufferType.SERVER && !isMessageBeforeReceipt(msg, buf.prevReadReceipt)) {
 				sep.push(html`<${UnreadSeparator} key="unread"/>`);
 				hasUnreadSeparator = true;
 			}
