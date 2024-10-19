@@ -139,6 +139,20 @@ function isServerBuffer(buf) {
 	return buf.type === BufferType.SERVER;
 }
 
+function isChannelBuffer(buf) {
+	return buf.type === BufferType.CHANNEL;
+}
+
+function trimStartCharacter(s, c) {
+	let i = 0;
+	for (; i < s.length; ++i) {
+		if (s[i] !== c) {
+			break;
+		}
+	}
+	return s.substring(i);
+}
+
 /* Returns 1 if a should appear after b, -1 if a should appear before b, or
  * 0 otherwise. */
 function compareBuffers(a, b) {
@@ -148,10 +162,19 @@ function compareBuffers(a, b) {
 	if (isServerBuffer(a) !== isServerBuffer(b)) {
 		return isServerBuffer(b) ? 1 : -1;
 	}
-	if (a.name !== b.name) {
-		return a.name.localeCompare(b.name);
+
+	if (isChannelBuffer(a) && isChannelBuffer(b)) {
+		const strippedA = trimStartCharacter(a.name, a.name[0]);
+		const strippedB = trimStartCharacter(b.name, b.name[0]);
+		const cmp = strippedA.localeCompare(strippedB);
+
+		if (cmp !== 0) {
+			return cmp;
+		}
+		// if they are the same when stripped, fallthough to default logic
 	}
-	return 0;
+
+	return a.name.localeCompare(b.name);
 }
 
 function updateMembership(membership, letter, add, client) {
