@@ -1,4 +1,5 @@
-image: alpine/latest
+# TODO switch back to alpine/latest once the "npm install" deadlock is fixed
+image: alpine/edge
 packages:
 - npm
 - rsync
