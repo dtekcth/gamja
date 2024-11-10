@@ -364,8 +364,14 @@ a {
 	color: var(--green);
 }
 #buffer-list li a, a.timestamp, a.nick {
-	color: var(--gray);
 	text-decoration: none;
+}
+#buffer-list li a,
+a.nick {
+	color: var(--main-color);
+}
+a.timestamp {
+	color: var(--gray);
 }
 #buffer-list li a:hover, #buffer-list li a:active,
 a.timestamp:hover, a.timestamp:active,
@@ -628,11 +634,6 @@ ul.switcher-list .server {
 	form input[type="search"]:focus {
 		outline: 0;
 		border-color: #3897ff;
-	}
-
-	#buffer-list li a,
-	a.nick {
-		color: var(--main-color);
 	}
 
 	#buffer {
