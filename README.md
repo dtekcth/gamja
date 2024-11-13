@@ -10,7 +10,7 @@ Requires an IRC WebSocket server.
 
 First install dependencies:
 
-    npm install --production
+    npm install --omit=dev
 
 Then [configure an HTTP server] to serve the gamja files.
 
