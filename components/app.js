@@ -383,7 +383,7 @@ export default class App extends Component {
 			}
 		}
 
-		this.setState({ loading: false, connectParams: connectParams });
+		this.setState({ loading: false, connectParams });
 
 		if (connectParams.autoconnect) {
 			this.setState({ connectForm: false });
