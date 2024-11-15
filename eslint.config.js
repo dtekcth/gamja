@@ -24,6 +24,8 @@ export default [
 			}],
 			"no-var": "error",
 			"eqeqeq": "error",
+			"no-invalid-this": "error",
+			"prefer-arrow-callback": "error",
 			"@stylistic/js/indent": ["warn", "tab"],
 			"@stylistic/js/quotes": ["warn", "double"],
 			"@stylistic/js/semi": "warn",
