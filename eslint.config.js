@@ -27,6 +27,7 @@ export default [
 			"no-invalid-this": "error",
 			"prefer-arrow-callback": "error",
 			"no-implicit-coercion": "warn",
+			"object-shorthand": "warn",
 			"@stylistic/js/indent": ["warn", "tab"],
 			"@stylistic/js/quotes": ["warn", "double"],
 			"@stylistic/js/semi": "warn",
