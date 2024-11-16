@@ -1583,7 +1583,7 @@ export default class App extends Component {
 		let name = parts[0].toLowerCase().slice(1);
 		let args = parts.slice(1);
 
-		let cmd = commands[name];
+		let cmd = commands.get(name);
 		if (!cmd) {
 			this.showError(`Unknown command "${name}" (run "/help" to get a command list)`);
 			return;
@@ -1715,7 +1715,7 @@ export default class App extends Component {
 		}
 
 		if (prefix.startsWith("/")) {
-			let repl = fromList(Object.keys(commands), prefix.slice(1));
+			let repl = fromList([...commands.keys()], prefix.slice(1));
 			return repl.map((cmd) => "/" + cmd);
 		}
 
