@@ -634,7 +634,7 @@ export const State = {
 			return updateUser(msg.prefix.name, { account });
 		case "AWAY":
 			let awayMessage = msg.params[0];
-			return updateUser(msg.prefix.name, { away: !!awayMessage });
+			return updateUser(msg.prefix.name, { away: Boolean(awayMessage) });
 		case "TOPIC":
 			channel = msg.params[0];
 			topic = msg.params[1];

@@ -515,7 +515,7 @@ export default class App extends Component {
 		this.setState((state) => {
 			let updated;
 			[id, updated] = State.createBuffer(state, name, serverID, client);
-			isNew = !!updated;
+			isNew = Boolean(updated);
 			return updated;
 		});
 		if (isNew) {
