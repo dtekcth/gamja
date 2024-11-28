@@ -43,7 +43,7 @@ function _Timestamp({ date, url, showSeconds }) {
 		if (showSeconds) {
 			timestamp += ":--";
 		}
-		return html`<spam class="timestamp">${timestamp}</span>`;
+		return html`<span class="timestamp">${timestamp}</span>`;
 	}
 
 	let hh = date.getHours().toString().padStart(2, "0");
