@@ -274,9 +274,15 @@ class LogLine extends Component {
 			break;
 		case "TOPIC":
 			let topic = msg.params[1];
-			content = html`
-				${createNick(msg.prefix.name)} changed the topic to: ${linkify(stripANSI(topic), onChannelClick)}
-			`;
+			if (topic) {
+				content = html`
+					${createNick(msg.prefix.name)} changed the topic to: ${linkify(stripANSI(topic), onChannelClick)}
+				`;
+			} else {
+				content = html`
+					${createNick(msg.prefix.name)} cleared the topic
+				`;
+			}
 			break;
 		case "INVITE":
 			invitee = msg.params[0];
