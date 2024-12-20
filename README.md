@@ -2,7 +2,7 @@
 
 A simple IRC web client.
 
-![screenshot](https://l.sr.ht/7Npm.png)
+<img src="https://codeberg.org/attachments/117ff232-7e73-46c7-a21d-2b59ffa3765a" alt="Screenshot" width="800">
 
 ## Usage
 
