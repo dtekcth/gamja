@@ -63,7 +63,8 @@ if (remoteHost) {
 			ws.close();
 		});
 
-		client.on("error", () => {
+		client.on("error", (err) => {
+			console.log(err);
 			ws.close(WS_BAD_GATEWAY);
 		});
 	});
