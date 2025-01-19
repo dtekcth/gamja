@@ -323,6 +323,8 @@ export default class App extends Component {
 		}
 		if (queryParams.debug === "1") {
 			this.debug = true;
+		} else if (queryParams.debug === "0") {
+			this.debug = false;
 		}
 
 		if (window.location.hash) {
