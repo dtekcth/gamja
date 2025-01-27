@@ -153,10 +153,24 @@ function trimStartCharacter(s, c) {
 	return s.substring(i);
 }
 
+function getBouncerNetworkNameFromBuffer(state, buffer) {
+	let server = state.servers.get(buffer.server);
+	let network = state.bouncerNetworks.get(server.bouncerNetID);
+	if (!network) {
+		return null;
+	}
+	return getServerName(server, network);
+}
+
 /* Returns 1 if a should appear after b, -1 if a should appear before b, or
  * 0 otherwise. */
-function compareBuffers(a, b) {
+function compareBuffers(state, a, b) {
 	if (a.server !== b.server) {
+		let aServerName = getBouncerNetworkNameFromBuffer(state, a);
+		let bServerName = getBouncerNetworkNameFromBuffer(state, b);
+		if (aServerName && bServerName && aServerName !== bServerName) {
+			return aServerName.localeCompare(bServerName);
+		}
 		return a.server > b.server ? 1 : -1;
 	}
 	if (isServerBuffer(a) !== isServerBuffer(b)) {
@@ -365,7 +379,7 @@ export const State = {
 			unread: Unread.NONE,
 			prevReadReceipt: null,
 		});
-		bufferList = bufferList.sort(compareBuffers);
+		bufferList = bufferList.sort((a, b) => compareBuffers(state, a, b));
 		let buffers = new Map(bufferList.map((buf) => [buf.id, buf]));
 		return [id, { buffers }];
 	},
