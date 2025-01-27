@@ -146,9 +146,10 @@ class LogLine extends Component {
 				lineClass = "talk";
 				let prefix = "<", suffix = ">";
 				if (msg.command === "NOTICE") {
+					lineClass += " notice";
 					prefix = suffix = "-";
 				}
-				content = html`${prefix}${createNick(msg.prefix.name)}${suffix} ${linkify(stripANSI(text), onChannelClick)}`;
+				content = html`<span class="nick-caret">${prefix}</span>${createNick(msg.prefix.name)}<span class="nick-caret">${suffix}</span> ${linkify(stripANSI(text), onChannelClick)}`;
 			}
 
 			let allowedPrefixes = server.statusMsg;
