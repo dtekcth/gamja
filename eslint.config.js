@@ -34,6 +34,7 @@ export default [
 			"no-implicit-coercion": "warn",
 			"object-shorthand": "warn",
 			"curly": "warn",
+			"camelcase": "warn",
 			"@stylistic/js/indent": ["warn", "tab"],
 			"@stylistic/js/quotes": ["warn", "double"],
 			"@stylistic/js/semi": "warn",
