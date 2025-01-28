@@ -42,8 +42,8 @@ function KeyBindingsHelp() {
 }
 
 function CommandsHelp() {
-	let l = Object.keys(commands).map((name) => {
-		let cmd = commands[name];
+	let l = [...commands.keys()].map((name) => {
+		let cmd = commands.get(name);
 
 		let usage = [html`<strong>/${name}</strong>`];
 		if (cmd.usage) {
