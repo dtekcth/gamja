@@ -94,7 +94,7 @@ function canFoldMessage(msg) {
 
 class LogLine extends Component {
 	shouldComponentUpdate(nextProps) {
-		return this.props.message !== nextProps.message;
+		return this.props.message !== nextProps.message || this.props.redacted !== nextProps.redacted;
 	}
 
 	render() {
@@ -143,13 +143,18 @@ class LogLine extends Component {
 					`;
 				}
 			} else {
-				lineClass = "talk";
 				let prefix = "<", suffix = ">";
 				if (msg.command === "NOTICE") {
 					lineClass += " notice";
 					prefix = suffix = "-";
 				}
-				content = html`<span class="nick-caret">${prefix}</span>${createNick(msg.prefix.name)}<span class="nick-caret">${suffix}</span> ${linkify(stripANSI(text), onChannelClick)}`;
+				if (this.props.redacted) {
+					content = html`<i>This message has been deleted.</i>`;
+				} else {
+					content = html`${linkify(stripANSI(text), onChannelClick)}`;
+					lineClass += " talk";
+				}
+				content = html`<span class="nick-caret">${prefix}</span>${createNick(msg.prefix.name)}<span class="nick-caret">${suffix}</span> ${content}`;
 			}
 
 			let allowedPrefixes = server.statusMsg;
@@ -710,6 +715,7 @@ export default class Buffer extends Component {
 					message=${msg}
 					buffer=${buf}
 					server=${server}
+					redacted=${buf.redacted.has(msg.tags.msgid)}
 					onChannelClick=${onChannelClick}
 					onNickClick=${onNickClick}
 					onVerifyClick=${onVerifyClick}

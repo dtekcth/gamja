@@ -361,6 +361,7 @@ export const State = {
 			hasInitialWho: false, // if channel
 			members: new irc.CaseMapMap(null, client.cm), // if channel
 			messages: [],
+			redacted: new Set(),
 			unread: Unread.NONE,
 			prevReadReceipt: null,
 		});
@@ -664,6 +665,14 @@ export const State = {
 				});
 
 				return { members };
+			});
+		case "REDACT":
+			target = msg.params[0];
+			if (client.isMyNick(target)) {
+				target = msg.prefix.name;
+			}
+			return updateBuffer(target, (buf) => {
+				return { redacted: new Set(buf.redacted).add(msg.params[1]) };
 			});
 		case irc.RPL_MONONLINE:
 		case irc.RPL_MONOFFLINE:
