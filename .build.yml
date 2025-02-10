@@ -7,6 +7,8 @@ sources:
 - https://codeberg.org/emersion/gamja.git
 secrets:
 - 7a146c8e-aeb4-46e7-99bf-05af7486bbe9 # deploy SSH key
+artifacts:
+- gamja/gamja.tar.gz
 tasks:
 - setup: |
     cd gamja
@@ -14,6 +16,7 @@ tasks:
 - build: |
     cd gamja
     npm run build
+    tar -czf gamja.tar.gz -C dist .
 - lint: |
     cd gamja
     npm run -- lint --max-warnings 0
