@@ -10,7 +10,7 @@
     "@eslint/js": "^9.11.1",
     "@parcel/packager-raw-url": "^2.0.0",
     "@parcel/transformer-webmanifest": "^2.0.0",
-    "@stylistic/eslint-plugin-js": "^2.8.0",
+    "@stylistic/eslint-plugin-js": "^3.1.0",
     "eslint": "^9.11.1",
     "globals": "^15.9.0",
     "node-static": "^0.7.11",
