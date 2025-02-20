@@ -40,6 +40,7 @@ export default [
 			"@stylistic/js/semi": "warn",
 			"@stylistic/js/brace-style": ["warn", "1tbs"],
 			"@stylistic/js/comma-dangle": ["warn", "always-multiline"],
+			"@stylistic/js/comma-spacing": "warn",
 			"@stylistic/js/arrow-parens": "warn",
 			"@stylistic/js/arrow-spacing": "warn",
 			"@stylistic/js/block-spacing": "warn",
