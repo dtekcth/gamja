@@ -124,7 +124,7 @@ const commands = [
 			if (args.length) {
 				params.push(args.join(" "));
 			}
-			getActiveClient(app).send({command: "AWAY", params});
+			getActiveClient(app).send({ command: "AWAY", params });
 		},
 	},
 	ban,
@@ -190,9 +190,10 @@ const commands = [
 				throw new Error("Missing nick");
 			}
 			let activeChannel = getActiveChannel(app);
-			getActiveClient(app).send({ command: "INVITE", params: [
-				nick, activeChannel,
-			]});
+			getActiveClient(app).send({
+				command: "INVITE",
+				params: [nick, activeChannel],
+			});
 		},
 	},
 	{ ...join, name: "j" },

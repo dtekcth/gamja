@@ -40,6 +40,7 @@ export default [
 			"@stylistic/js/semi": "warn",
 			"@stylistic/js/comma-dangle": ["warn", "always-multiline"],
 			"@stylistic/js/arrow-parens": "warn",
+			"@stylistic/js/object-curly-spacing": ["warn", "always"],
 		},
 	},
 ];
