@@ -231,7 +231,7 @@ function insertMessage(list, msg) {
 	}
 	console.assert(insertBefore >= 0, "");
 
-	list = [ ...list ];
+	list = [...list];
 	list.splice(insertBefore, 0, msg);
 	return list;
 }

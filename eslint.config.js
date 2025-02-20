@@ -46,6 +46,7 @@ export default [
 				multiline: true,
 				consistent: true,
 			}],
+			"@stylistic/js/array-bracket-spacing": ["warn", "never"],
 			"@stylistic/js/array-bracket-newline": ["warn", "consistent"],
 		},
 	},
