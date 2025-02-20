@@ -42,6 +42,7 @@ export default [
 			"@stylistic/js/comma-dangle": ["warn", "always-multiline"],
 			"@stylistic/js/arrow-parens": "warn",
 			"@stylistic/js/arrow-spacing": "warn",
+			"@stylistic/js/block-spacing": "warn",
 			"@stylistic/js/object-curly-spacing": ["warn", "always"],
 			"@stylistic/js/object-curly-newline": ["warn", {
 				multiline: true,
