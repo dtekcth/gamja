@@ -821,7 +821,7 @@ export default class Buffer extends Component {
 
 			if (sep.length > 0) {
 				children.push(createFoldGroup(foldMessages));
-				children.push(sep);
+				children.push(...sep);
 				foldMessages = [];
 			}
 
