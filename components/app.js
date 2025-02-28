@@ -2006,7 +2006,9 @@ export default class App extends Component {
 		this.lastFocusPingDate = now;
 
 		for (let client of this.clients.values()) {
-			client.send({ command: "PING", params: ["gamja"] });
+			if (client.status === Client.Status.REGISTERED) {
+				client.send({ command: "PING", params: ["gamja"] });
+			}
 		}
 	}
 
