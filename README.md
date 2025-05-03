@@ -6,7 +6,7 @@ A simple IRC web client.
 
 ## Fork notes
 
-This is a fork of [gamja](https://git.sr.ht/~emersion/gamja).
+This is a fork of [gamja](https://codeberg.org/emersion/gamja).
 The only reason for the fork is to build a docker image.
 Please don't change stuff.
 
