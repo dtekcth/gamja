@@ -53,6 +53,7 @@ function markServerBufferUnread(app) {
 }
 
 const join = {
+	name: "join",
 	usage: "<name> [password]",
 	description: "Join a channel",
 	execute: (app, args) => {
@@ -69,6 +70,7 @@ const join = {
 };
 
 const kick = {
+	name: "kick",
 	usage: "<nick> [comment]",
 	description: "Remove a user from the channel",
 	execute: (app, args) => {
@@ -83,10 +85,11 @@ const kick = {
 };
 
 const ban = {
+	name: "ban",
 	usage: "[nick]",
 	description: "Ban a user from the channel, or display the current ban list",
 	execute: (app, args) => {
-		if (args.length == 0) {
+		if (args.length === 0) {
 			let activeChannel = getActiveChannel(app);
 			getActiveClient(app).send({
 				command: "MODE",
@@ -111,20 +114,22 @@ function givemode(app, args, mode) {
 	});
 }
 
-export default {
-	"away": {
+const commands = [
+	{
+		name: "away",
 		usage: "[message]",
 		description: "Set away message",
 		execute: (app, args) => {
-			const params = []
+			const params = [];
 			if (args.length) {
 				params.push(args.join(" "));
 			}
-			getActiveClient(app).send({command: "AWAY", params});
+			getActiveClient(app).send({ command: "AWAY", params });
 		},
 	},
-	"ban": ban,
-	"buffer": {
+	ban,
+	{
+		name: "buffer",
 		usage: "<name>",
 		description: "Switch to a buffer",
 		execute: (app, args) => {
@@ -138,39 +143,45 @@ export default {
 			throw new Error("Unknown buffer");
 		},
 	},
-	"close": {
+	{
+		name: "close",
 		description: "Close the current buffer",
 		execute: (app, args) => {
 			let activeBuffer = app.state.buffers.get(app.state.activeBuffer);
-			if (!activeBuffer || activeBuffer.type == BufferType.SERVER) {
+			if (!activeBuffer || activeBuffer.type === BufferType.SERVER) {
 				throw new Error("Not in a user or channel buffer");
 			}
 			app.close(activeBuffer.id);
 		},
 	},
-	"deop": {
+	{
+		name: "deop",
 		usage: "<nick>",
 		description: "Remove operator status for a user on this channel",
 		execute: (app, args) => givemode(app, args, "-o"),
 	},
-	"devoice": {
+	{
+		name: "devoice",
 		usage: "<nick>",
 		description: "Remove voiced status for a user on this channel",
 		execute: (app, args) => givemode(app, args, "-v"),
 	},
-	"disconnect": {
+	{
+		name: "disconnect",
 		description: "Disconnect from the server",
 		execute: (app, args) => {
 			app.disconnect();
 		},
 	},
-	"help": {
+	{
+		name: "help",
 		description: "Show help menu",
 		execute: (app, args) => {
 			app.openHelp();
 		},
 	},
-	"invite": {
+	{
+		name: "invite",
 		usage: "<nick>",
 		description: "Invite a user to the channel",
 		execute: (app, args) => {
@@ -179,15 +190,17 @@ export default {
 				throw new Error("Missing nick");
 			}
 			let activeChannel = getActiveChannel(app);
-			getActiveClient(app).send({ command: "INVITE", params: [
-				nick, activeChannel,
-			]});
+			getActiveClient(app).send({
+				command: "INVITE",
+				params: [nick, activeChannel],
+			});
 		},
 	},
-	"j": join,
-	"join": join,
-	"kick": kick,
-	"kickban": {
+	{ ...join, name: "j" },
+	join,
+	kick,
+	{
+		name: "kickban",
 		usage: "<target>",
 		description: "Ban a user and removes them from the channel",
 		execute: (app, args) => {
@@ -195,7 +208,8 @@ export default {
 			ban.execute(app, args);
 		},
 	},
-	"lusers": {
+	{
+		name: "lusers",
 		usage: "[<mask> [<target>]]",
 		description: "Request user statistics about the network",
 		execute: (app, args) => {
@@ -203,7 +217,8 @@ export default {
 			markServerBufferUnread(app);
 		},
 	},
-	"me": {
+	{
+		name: "me",
 		usage: "<action>",
 		description: "Send an action message to the current buffer",
 		execute: (app, args) => {
@@ -213,7 +228,8 @@ export default {
 			app.privmsg(target, text);
 		},
 	},
-	"mode": {
+	{
+		name: "mode",
 		usage: "[target] [modes] [mode args...]",
 		description: "Query or change a channel or user mode",
 		execute: (app, args) => {
@@ -225,7 +241,8 @@ export default {
 			getActiveClient(app).send({ command: "MODE", params: args });
 		},
 	},
-	"motd": {
+	{
+		name: "motd",
 		usage: "[server]",
 		description: "Get the Message Of The Day",
 		execute: (app, args) => {
@@ -233,7 +250,8 @@ export default {
 			markServerBufferUnread(app);
 		},
 	},
-	"msg": {
+	{
+		name: "msg",
 		usage: "<target> <message>",
 		description: "Send a message to a nickname or a channel",
 		execute: (app, args) => {
@@ -242,7 +260,8 @@ export default {
 			getActiveClient(app).send({ command: "PRIVMSG", params: [target, text] });
 		},
 	},
-	"nick": {
+	{
+		name: "nick",
 		usage: "<nick>",
 		description: "Change current nickname",
 		execute: (app, args) => {
@@ -250,7 +269,8 @@ export default {
 			getActiveClient(app).send({ command: "NICK", params: [newNick] });
 		},
 	},
-	"notice": {
+	{
+		name: "notice",
 		usage: "<target> <message>",
 		description: "Send a notice to a nickname or a channel",
 		execute: (app, args) => {
@@ -259,12 +279,14 @@ export default {
 			getActiveClient(app).send({ command: "NOTICE", params: [target, text] });
 		},
 	},
-	"op": {
+	{
+		name: "op",
 		usage: "<nick>",
 		description: "Give a user operator status on this channel",
 		execute: (app, args) => givemode(app, args, "+o"),
 	},
-	"part": {
+	{
+		name: "part",
 		usage: "[reason]",
 		description: "Leave a channel",
 		execute: (app, args) => {
@@ -277,7 +299,8 @@ export default {
 			getActiveClient(app).send({ command: "PART", params });
 		},
 	},
-	"query": {
+	{
+		name: "query",
 		usage: "<nick> [message]",
 		description: "Open a buffer to send messages to a nickname",
 		execute: (app, args) => {
@@ -293,11 +316,12 @@ export default {
 			}
 		},
 	},
-	"quiet": {
+	{
+		name: "quiet",
 		usage: "[nick]",
 		description: "Quiet a user in the channel, or display the current quiet list",
 		execute: (app, args) => {
-			if (args.length == 0) {
+			if (args.length === 0) {
 				getActiveClient(app).send({
 					command: "MODE",
 					params: [getActiveChannel(app), "+q"],
@@ -307,13 +331,15 @@ export default {
 			}
 		},
 	},
-	"quit": {
+	{
+		name: "quit",
 		description: "Quit",
 		execute: (app, args) => {
 			app.close({ name: SERVER_BUFFER });
 		},
 	},
-	"quote": {
+	{
+		name: "quote",
 		usage: "<command>",
 		description: "Send a raw IRC command to the server",
 		execute: (app, args) => {
@@ -326,13 +352,15 @@ export default {
 			getActiveClient(app).send(msg);
 		},
 	},
-	"reconnect": {
+	{
+		name: "reconnect",
 		description: "Reconnect to the server",
 		execute: (app, args) => {
 			app.reconnect();
 		},
 	},
-	"setname": {
+	{
+		name: "setname",
 		usage: "<realname>",
 		description: "Change current realname",
 		execute: (app, args) => {
@@ -345,7 +373,8 @@ export default {
 			// TODO: save to local storage
 		},
 	},
-	"stats": {
+	{
+		name: "stats",
 		usage: "<query> [server]",
 		description: "Request server statistics",
 		execute: (app, args) => {
@@ -361,7 +390,8 @@ export default {
 			markServerBufferUnread(app);
 		},
 	},
-	"topic": {
+	{
+		name: "topic",
 		usage: "<topic>",
 		description: "Change the topic of the current channel",
 		execute: (app, args) => {
@@ -373,26 +403,30 @@ export default {
 			getActiveClient(app).send({ command: "TOPIC", params });
 		},
 	},
-	"unban": {
+	{
+		name: "unban",
 		usage: "<nick>",
 		description: "Remove a user from the ban list",
 		execute: (app, args) => {
 			return setUserHostMode(app, args, "-b");
 		},
 	},
-	"unquiet": {
+	{
+		name: "unquiet",
 		usage: "<nick>",
 		description: "Remove a user from the quiet list",
 		execute: (app, args) => {
 			return setUserHostMode(app, args, "-q");
 		},
 	},
-	"voice": {
+	{
+		name: "voice",
 		usage: "<nick>",
 		description: "Give a user voiced status on this channel",
 		execute: (app, args) => givemode(app, args, "+v"),
 	},
-	"who": {
+	{
+		name: "who",
 		usage: "<mask>",
 		description: "Retrieve a list of users",
 		execute: (app, args) => {
@@ -400,7 +434,8 @@ export default {
 			markServerBufferUnread(app);
 		},
 	},
-	"whois": {
+	{
+		name: "whois",
 		usage: "<nick>",
 		description: "Retrieve information about a user",
 		execute: (app, args) => {
@@ -412,7 +447,8 @@ export default {
 			markServerBufferUnread(app);
 		},
 	},
-	"whowas": {
+	{
+		name: "whowas",
 		usage: "<nick> [count]",
 		description: "Retrieve information about an offline user",
 		execute: (app, args) => {
@@ -423,7 +459,8 @@ export default {
 			markServerBufferUnread(app);
 		},
 	},
-	"list": {
+	{
+		name: "list",
 		usage: "[filter]",
 		description: "Retrieve a list of channels from a network",
 		execute: (app, args) => {
@@ -431,4 +468,6 @@ export default {
 			markServerBufferUnread(app);
 		},
 	},
-};
+];
+
+export default new Map(commands.map((cmd) => [cmd.name, cmd]));

@@ -1,4 +1,4 @@
-import { html, Component } from "../lib/index.js";
+import { html } from "../lib/index.js";
 import { keybindings } from "../keybindings.js";
 import commands from "../commands.js";
 
@@ -42,8 +42,8 @@ function KeyBindingsHelp() {
 }
 
 function CommandsHelp() {
-	let l = Object.keys(commands).map((name) => {
-		let cmd = commands[name];
+	let l = [...commands.keys()].map((name) => {
+		let cmd = commands.get(name);
 
 		let usage = [html`<strong>/${name}</strong>`];
 		if (cmd.usage) {

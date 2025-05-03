@@ -1,4 +1,4 @@
-import { html, Component } from "../lib/index.js";
+import { html } from "../lib/index.js";
 import linkify from "../lib/linkify.js";
 import { strip as stripANSI } from "../lib/ansi.js";
 import { BufferType, ServerStatus, getServerName } from "../state.js";
@@ -214,7 +214,7 @@ export default function BufferHeader(props) {
 	}
 
 	let name = props.buffer.name;
-	if (props.buffer.type == BufferType.SERVER) {
+	if (props.buffer.type === BufferType.SERVER) {
 		name = getServerName(props.server, props.bouncerNetwork);
 	}
 

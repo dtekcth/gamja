@@ -1,4 +1,4 @@
-import { html, Component } from "../lib/index.js";
+import { Component } from "../lib/index.js";
 
 let store = new Map();
 
@@ -11,10 +11,10 @@ export default class ScrollManager extends Component {
 
 	isAtBottom() {
 		let target = this.props.target.current;
-		return target.scrollTop >= target.scrollHeight - target.offsetHeight;
+		return Math.abs(target.scrollHeight - target.clientHeight - target.scrollTop) <= 10;
 	}
 
-	saveScrollPosition() {
+	saveScrollPosition(scrollKey) {
 		let target = this.props.target.current;
 
 		let sticky = target.querySelectorAll(this.props.stickTo);
@@ -29,7 +29,7 @@ export default class ScrollManager extends Component {
 			}
 		}
 
-		store.set(this.props.scrollKey, stickToKey);
+		store.set(scrollKey, stickToKey);
 	}
 
 	restoreScrollPosition() {
@@ -48,13 +48,13 @@ export default class ScrollManager extends Component {
 			}
 		}
 
-		if (target.scrollTop == 0) {
+		if (target.scrollTop === 0) {
 			this.props.onScrollTop();
 		}
 	}
 
 	handleScroll() {
-		if (this.props.target.current.scrollTop == 0) {
+		if (this.props.target.current.scrollTop === 0) {
 			this.props.onScrollTop();
 		}
 	}
@@ -64,9 +64,9 @@ export default class ScrollManager extends Component {
 		this.props.target.current.addEventListener("scroll", this.handleScroll);
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if (this.props.scrollKey !== nextProps.scrollKey || this.props.children !== nextProps.children) {
-			this.saveScrollPosition();
+	getSnapshotBeforeUpdate(prevProps) {
+		if (this.props.scrollKey !== prevProps.scrollKey || this.props.children !== prevProps.children) {
+			this.saveScrollPosition(prevProps.scrollKey);
 		}
 	}
 
@@ -79,7 +79,7 @@ export default class ScrollManager extends Component {
 
 	componentWillUnmount() {
 		this.props.target.current.removeEventListener("scroll", this.handleScroll);
-		this.saveScrollPosition();
+		this.saveScrollPosition(this.props.scrollKey);
 	}
 
 	render() {

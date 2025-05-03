@@ -7,7 +7,7 @@ gamja settings can be overridden using URL query parameters:
   replaced with a randomly generated value)
 - `channels`: comma-separated list of channels to join (`#` needs to be escaped)
 - `open`: [IRC URL] to open
-- `debug`: if set to 1, debug mode is enabled
+- `debug`: enable debug logs if set to `1`, disable debug logs if set to `0`
 
 Alternatively, the channels can be set with the URL fragment (ie, by just
 appending the channel name to the gamja URL).

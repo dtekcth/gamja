@@ -21,13 +21,13 @@ export default class Dialog extends Component {
 	}
 
 	handleBackdropClick(event) {
-		if (event.target.className == "dialog") {
+		if (event.target.className === "dialog") {
 			this.dismiss();
 		}
 	}
 
 	handleKeyDown(event) {
-		if (event.key == "Escape") {
+		if (event.key === "Escape") {
 			this.dismiss();
 		}
 	}

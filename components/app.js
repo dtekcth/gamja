@@ -55,7 +55,7 @@ function isProduction() {
 	// NODE_ENV is set by the Parcel build system
 	try {
 		return process.env.NODE_ENV === "production";
-	} catch (err) {
+	} catch (_err) {
 		return false;
 	}
 }
@@ -94,7 +94,7 @@ function splitHostPort(str) {
 function fillConnectParams(params) {
 	let host = window.location.host || "localhost:8080";
 	let proto = "wss:";
-	if (window.location.protocol != "https:") {
+	if (window.location.protocol !== "https:") {
 		proto = "ws:";
 	}
 	let path = window.location.pathname || "/";
@@ -323,6 +323,8 @@ export default class App extends Component {
 		}
 		if (queryParams.debug === "1") {
 			this.debug = true;
+		} else if (queryParams.debug === "0") {
+			this.debug = false;
 		}
 
 		if (window.location.hash) {
@@ -383,7 +385,7 @@ export default class App extends Component {
 			}
 		}
 
-		this.setState({ loading: false, connectParams: connectParams });
+		this.setState({ loading: false, connectParams });
 
 		if (connectParams.autoconnect) {
 			this.setState({ connectForm: false });
@@ -437,6 +439,9 @@ export default class App extends Component {
 					clientSecret: this.config.oauth2.client_secret,
 				});
 				username = data.username;
+				if (!username) {
+					console.warn("Username missing from OAuth 2.0 token introspection response");
+				}
 			} catch (err) {
 				console.warn("Failed to introspect OAuth 2.0 token:", err);
 			}
@@ -512,7 +517,7 @@ export default class App extends Component {
 		this.setState((state) => {
 			let updated;
 			[id, updated] = State.createBuffer(state, name, serverID, client);
-			isNew = !!updated;
+			isNew = Boolean(updated);
 			return updated;
 		});
 		if (isNew) {
@@ -684,7 +689,7 @@ export default class App extends Component {
 		}
 
 		let msgUnread = Unread.NONE;
-		if ((msg.command == "PRIVMSG" || msg.command == "NOTICE") && !isRead) {
+		if ((msg.command === "PRIVMSG" || msg.command === "NOTICE") && !isRead) {
 			let target = msg.params[0];
 			let text = msg.params[1];
 
@@ -699,7 +704,7 @@ export default class App extends Component {
 				msgUnread = Unread.MESSAGE;
 			}
 
-			if (msgUnread == Unread.HIGHLIGHT && !isDelivered && !irc.parseCTCP(msg)) {
+			if (msgUnread === Unread.HIGHLIGHT && !isDelivered && !irc.parseCTCP(msg)) {
 				let title = "New " + kind + " from " + msg.prefix.name;
 				if (client.isChannel(bufName)) {
 					title += " in " + bufName;
@@ -757,7 +762,7 @@ export default class App extends Component {
 
 		// Open a new buffer if the message doesn't come from me or is a
 		// self-message
-		if ((!client.isMyNick(msg.prefix.name) || client.isMyNick(bufName)) && (msg.command != "PART" && msg.comand != "QUIT" && msg.command != irc.RPL_MONONLINE && msg.command != irc.RPL_MONOFFLINE)) {
+		if ((!client.isMyNick(msg.prefix.name) || client.isMyNick(bufName)) && (msg.command !== "PART" && msg.command !== "QUIT" && msg.command !== irc.RPL_MONONLINE && msg.command !== irc.RPL_MONOFFLINE)) {
 			this.createBuffer(serverID, bufName);
 		}
 
@@ -924,7 +929,7 @@ export default class App extends Component {
 				if (client.cm(msg.prefix.name) === client.cm(client.serverPrefix.name)) {
 					target = SERVER_BUFFER;
 				} else {
-					let context = msg.tags['+draft/channel-context'];
+					let context = msg.tags["+draft/channel-context"];
 					if (context && client.isChannel(context) && State.getBuffer(this.state, { server: serverID, name: context })) {
 						target = context;
 					} else {
@@ -975,7 +980,7 @@ export default class App extends Component {
 				affectedBuffers.push(chatHistoryBatch.params[0]);
 			} else {
 				this.state.buffers.forEach((buf) => {
-					if (buf.server != serverID) {
+					if (buf.server !== serverID) {
 						return;
 					}
 					if (!buf.members.has(msg.prefix.name)) {
@@ -993,7 +998,7 @@ export default class App extends Component {
 				affectedBuffers.push(chatHistoryBatch.params[0]);
 			} else {
 				this.state.buffers.forEach((buf) => {
-					if (buf.server != serverID) {
+					if (buf.server !== serverID) {
 						return;
 					}
 					if (!buf.members.has(msg.prefix.name)) {
@@ -1070,6 +1075,7 @@ export default class App extends Component {
 		case "ACK":
 		case "BOUNCER":
 		case "MARKREAD":
+		case "REDACT":
 			// Ignore these
 			return [];
 		default:
@@ -1139,13 +1145,14 @@ export default class App extends Component {
 				this.openURL(this.autoOpenURL);
 				this.autoOpenURL = null;
 			}
+			break;
 		case "JOIN":
 			channel = msg.params[0];
 
 			if (client.isMyNick(msg.prefix.name)) {
 				this.syncBufferUnread(serverID, channel);
 			}
-			if (channel == this.switchToChannel) {
+			if (channel === this.switchToChannel) {
 				this.switchBuffer({ server: serverID, name: channel });
 				this.switchToChannel = null;
 			}
@@ -1275,7 +1282,7 @@ export default class App extends Component {
 			});
 			break;
 		default:
-			if (irc.isError(msg.command) && msg.command != irc.ERR_NOMOTD) {
+			if (irc.isError(msg.command) && msg.command !== irc.ERR_NOMOTD) {
 				let description = msg.params[msg.params.length - 1];
 				this.showError(description);
 			}
@@ -1523,7 +1530,7 @@ export default class App extends Component {
 				servers.delete(buf.server);
 
 				let connectForm = state.connectForm;
-				if (servers.size == 0) {
+				if (servers.size === 0) {
 					connectForm = true;
 				}
 
@@ -1579,7 +1586,7 @@ export default class App extends Component {
 		let name = parts[0].toLowerCase().slice(1);
 		let args = parts.slice(1);
 
-		let cmd = commands[name];
+		let cmd = commands.get(name);
 		if (!cmd) {
 			this.showError(`Unknown command "${name}" (run "/help" to get a command list)`);
 			return;
@@ -1594,7 +1601,7 @@ export default class App extends Component {
 	}
 
 	privmsg(target, text) {
-		if (target == SERVER_BUFFER) {
+		if (target === SERVER_BUFFER) {
 			this.showError("Cannot send message in server buffer");
 			return;
 		}
@@ -1711,8 +1718,8 @@ export default class App extends Component {
 		}
 
 		if (prefix.startsWith("/")) {
-			let repl = fromList(Object.keys(commands), prefix.slice(1));
-			return repl.map(cmd => "/" + cmd);
+			let repl = fromList([...commands.keys()], prefix.slice(1));
+			return repl.map((cmd) => "/" + cmd);
 		}
 
 		// TODO: consider using the CHANTYPES ISUPPORT token here
@@ -1739,7 +1746,7 @@ export default class App extends Component {
 
 	async handleBufferScrollTop() {
 		let buf = this.state.buffers.get(this.state.activeBuffer);
-		if (!buf || buf.type == BufferType.SERVER) {
+		if (!buf || buf.type === BufferType.SERVER) {
 			return;
 		}
 
@@ -1918,7 +1925,7 @@ export default class App extends Component {
 		this.dismissDialog();
 
 		if (this.state.dialogData && this.state.dialogData.id) {
-			if (Object.keys(attrs).length == 0) {
+			if (Object.keys(attrs).length === 0) {
 				return;
 			}
 
@@ -1956,7 +1963,7 @@ export default class App extends Component {
 
 	handleOpenSettingsClick() {
 		let showProtocolHandler = false;
-		for (let [id, client] of this.clients) {
+		for (let [_id, client] of this.clients) {
 			if (client.caps.enabled.has("soju.im/bouncer-networks")) {
 				showProtocolHandler = true;
 				break;
@@ -1999,7 +2006,9 @@ export default class App extends Component {
 		this.lastFocusPingDate = now;
 
 		for (let client of this.clients.values()) {
-			client.send({ command: "PING", params: ["gamja"] });
+			if (client.status === Client.Status.REGISTERED) {
+				client.send({ command: "PING", params: ["gamja"] });
+			}
 		}
 	}
 
@@ -2058,7 +2067,7 @@ export default class App extends Component {
 		let bufferHeader = null;
 		if (activeBuffer) {
 			let activeUser = null;
-			if (activeBuffer.type == BufferType.NICK) {
+			if (activeBuffer.type === BufferType.NICK) {
 				activeUser = activeServer.users.get(activeBuffer.name);
 			}
 
@@ -2082,7 +2091,7 @@ export default class App extends Component {
 		}
 
 		let memberList = null;
-		if (activeBuffer && activeBuffer.type == BufferType.CHANNEL) {
+		if (activeBuffer && activeBuffer.type === BufferType.CHANNEL) {
 			memberList = html`
 				<section
 						id="member-list"
@@ -2267,7 +2276,6 @@ export default class App extends Component {
 					<${Buffer}
 						buffer=${activeBuffer}
 						server=${activeServer}
-						bouncerNetwork=${activeBouncerNetwork}
 						settings=${this.state.settings}
 						onChannelClick=${this.handleChannelClick}
 						onNickClick=${this.handleNickClick}

@@ -3,17 +3,25 @@ packages:
 - npm
 - rsync
 sources:
-- https://git.sr.ht/~emersion/gamja
+- https://codeberg.org/emersion/gamja.git
 secrets:
-- 77c7956b-003e-44f7-bb5c-2944b2047654 # deploy SSH key
+- 7a146c8e-aeb4-46e7-99bf-05af7486bbe9 # deploy SSH key
+artifacts:
+- gamja/gamja.tar.gz
 tasks:
 - setup: |
     cd gamja
     npm install --include=dev
+- build: |
+    cd gamja
     npm run build
+    tar -czf gamja.tar.gz -C dist .
+- lint: |
+    cd gamja
+    npm run -- lint --max-warnings 0
 - deploy: |
     cd gamja/dist
     [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/master)" ] || complete-build
     rsync --rsh="ssh -o StrictHostKeyChecking=no" -rP \
       --delete --exclude=config.json \
-      . deploy@sheeta.emersion.fr:/srv/http/gamja
+      . deploy-gamja@sheeta.emersion.fr:/srv/http/gamja

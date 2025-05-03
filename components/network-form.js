@@ -37,7 +37,7 @@ export default class NetworkForm extends Component {
 
 	handleInput(event) {
 		let target = event.target;
-		let value = target.type == "checkbox" ? target.checked : target.value;
+		let value = target.type === "checkbox" ? target.checked : target.value;
 		this.setState({ [target.name]: value });
 	}
 
@@ -46,10 +46,10 @@ export default class NetworkForm extends Component {
 
 		let params = {};
 		Object.keys(defaultParams).forEach((k) => {
-			if (!this.props.isNew && this.prevParams[k] == this.state[k]) {
+			if (!this.props.isNew && this.prevParams[k] === this.state[k]) {
 				return;
 			}
-			if (this.props.isNew && defaultParams[k] == this.state[k]) {
+			if (this.props.isNew && defaultParams[k] === this.state[k]) {
 				return;
 			}
 			params[k] = this.state[k];

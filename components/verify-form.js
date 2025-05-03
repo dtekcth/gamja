@@ -15,7 +15,7 @@ export default class RegisterForm extends Component {
 
 	handleInput(event) {
 		let target = event.target;
-		let value = target.type == "checkbox" ? target.checked : target.value;
+		let value = target.type === "checkbox" ? target.checked : target.value;
 		this.setState({ [target.name]: value });
 	}
 

@@ -136,22 +136,59 @@ function updateState(state, updater) {
 }
 
 function isServerBuffer(buf) {
-	return buf.type == BufferType.SERVER;
+	return buf.type === BufferType.SERVER;
+}
+
+function isChannelBuffer(buf) {
+	return buf.type === BufferType.CHANNEL;
+}
+
+function trimStartCharacter(s, c) {
+	let i = 0;
+	for (; i < s.length; ++i) {
+		if (s[i] !== c) {
+			break;
+		}
+	}
+	return s.substring(i);
+}
+
+function getBouncerNetworkNameFromBuffer(state, buffer) {
+	let server = state.servers.get(buffer.server);
+	let network = state.bouncerNetworks.get(server.bouncerNetID);
+	if (!network) {
+		return null;
+	}
+	return getServerName(server, network);
 }
 
 /* Returns 1 if a should appear after b, -1 if a should appear before b, or
  * 0 otherwise. */
-function compareBuffers(a, b) {
-	if (a.server != b.server) {
+function compareBuffers(state, a, b) {
+	if (a.server !== b.server) {
+		let aServerName = getBouncerNetworkNameFromBuffer(state, a);
+		let bServerName = getBouncerNetworkNameFromBuffer(state, b);
+		if (aServerName && bServerName && aServerName !== bServerName) {
+			return aServerName.localeCompare(bServerName);
+		}
 		return a.server > b.server ? 1 : -1;
 	}
-	if (isServerBuffer(a) != isServerBuffer(b)) {
+	if (isServerBuffer(a) !== isServerBuffer(b)) {
 		return isServerBuffer(b) ? 1 : -1;
 	}
-	if (a.name != b.name) {
-		return a.name.localeCompare(b.name);
+
+	if (isChannelBuffer(a) && isChannelBuffer(b)) {
+		const strippedA = trimStartCharacter(a.name, a.name[0]);
+		const strippedB = trimStartCharacter(b.name, b.name[0]);
+		const cmp = strippedA.localeCompare(strippedB);
+
+		if (cmp !== 0) {
+			return cmp;
+		}
+		// if they are the same when stripped, fallthough to default logic
 	}
-	return 0;
+
+	return a.name.localeCompare(b.name);
 }
 
 function updateMembership(membership, letter, add, client) {
@@ -178,7 +215,7 @@ function updateMembership(membership, letter, add, client) {
 
 /* Insert a message in an immutable list of sorted messages. */
 function insertMessage(list, msg) {
-	if (list.length == 0) {
+	if (list.length === 0) {
 		return [msg];
 	} else if (!irc.findBatchByType(msg, "chathistory") || list[list.length - 1].tags.time <= msg.tags.time) {
 		return list.concat(msg);
@@ -194,7 +231,7 @@ function insertMessage(list, msg) {
 	}
 	console.assert(insertBefore >= 0, "");
 
-	list = [ ...list ];
+	list = [...list];
 	list.splice(insertBefore, 0, msg);
 	return list;
 }
@@ -318,7 +355,7 @@ export const State = {
 		let id = lastBufferID;
 
 		let type;
-		if (name == SERVER_BUFFER) {
+		if (name === SERVER_BUFFER) {
 			type = BufferType.SERVER;
 		} else if (client.isChannel(name)) {
 			type = BufferType.CHANNEL;
@@ -338,10 +375,11 @@ export const State = {
 			hasInitialWho: false, // if channel
 			members: new irc.CaseMapMap(null, client.cm), // if channel
 			messages: [],
+			redacted: new Set(),
 			unread: Unread.NONE,
 			prevReadReceipt: null,
 		});
-		bufferList = bufferList.sort(compareBuffers);
+		bufferList = bufferList.sort((a, b) => compareBuffers(state, a, b));
 		let buffers = new Map(bufferList.map((buf) => [buf.id, buf]));
 		return [id, { buffers }];
 	},
@@ -394,7 +432,7 @@ export const State = {
 		case irc.RPL_ISUPPORT:
 			buffers = new Map(state.buffers);
 			state.buffers.forEach((buf) => {
-				if (buf.server != serverID) {
+				if (buf.server !== serverID) {
 					return;
 				}
 				let members = new irc.CaseMapMap(buf.members, client.cm);
@@ -452,10 +490,9 @@ export const State = {
 				});
 				return { members };
 			});
-			break;
 		case irc.RPL_ENDOFWHO:
 			target = msg.params[1];
-			if (msg.list.length == 0 && !client.isChannel(target) && target.indexOf("*") < 0) {
+			if (msg.list.length === 0 && !client.isChannel(target) && target.indexOf("*") < 0) {
 				// Not a channel nor a mask, likely a nick
 				return updateUser(target, (user) => {
 					return { offline: true };
@@ -483,12 +520,11 @@ export const State = {
 					return { users };
 				});
 			}
-			break;
 		case "JOIN":
 			channel = msg.params[0];
 
 			if (client.isMyNick(msg.prefix.name)) {
-				let [id, update] = State.createBuffer(state, channel, serverID, client);
+				let [_id, update] = State.createBuffer(state, channel, serverID, client);
 				state = { ...state, ...update };
 			}
 
@@ -546,7 +582,7 @@ export const State = {
 		case "QUIT":
 			buffers = new Map(state.buffers);
 			state.buffers.forEach((buf) => {
-				if (buf.server != serverID) {
+				if (buf.server !== serverID) {
 					return;
 				}
 				if (!buf.members.has(msg.prefix.name)) {
@@ -572,7 +608,7 @@ export const State = {
 
 			buffers = new Map(state.buffers);
 			state.buffers.forEach((buf) => {
-				if (buf.server != serverID) {
+				if (buf.server !== serverID) {
 					return;
 				}
 				if (!buf.members.has(msg.prefix.name)) {
@@ -613,7 +649,7 @@ export const State = {
 			return updateUser(msg.prefix.name, { account });
 		case "AWAY":
 			let awayMessage = msg.params[0];
-			return updateUser(msg.prefix.name, { away: !!awayMessage });
+			return updateUser(msg.prefix.name, { away: Boolean(awayMessage) });
 		case "TOPIC":
 			channel = msg.params[0];
 			topic = msg.params[1];
@@ -644,13 +680,21 @@ export const State = {
 
 				return { members };
 			});
+		case "REDACT":
+			target = msg.params[0];
+			if (client.isMyNick(target)) {
+				target = msg.prefix.name;
+			}
+			return updateBuffer(target, (buf) => {
+				return { redacted: new Set(buf.redacted).add(msg.params[1]) };
+			});
 		case irc.RPL_MONONLINE:
 		case irc.RPL_MONOFFLINE:
 			targets = msg.params[1].split(",");
 
 			for (let target of targets) {
 				let prefix = irc.parsePrefix(target);
-				let update = updateUser(prefix.name, { offline: msg.command == irc.RPL_MONOFFLINE });
+				let update = updateUser(prefix.name, { offline: msg.command === irc.RPL_MONOFFLINE });
 				state = { ...state, ...update };
 			}
 

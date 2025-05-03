@@ -2,7 +2,7 @@
 
 A simple IRC web client.
 
-![screenshot](https://l.sr.ht/7Npm.png)
+<img src="https://fs.emersion.fr/protected/img/gamja/main.png" alt="Screenshot" width="800">
 
 ## Fork notes
 
@@ -16,7 +16,7 @@ Requires an IRC WebSocket server.
 
 First install dependencies:
 
-    npm install --production
+    npm install --omit=dev
 
 Then [configure an HTTP server] to serve the gamja files.
 
@@ -43,7 +43,7 @@ gamja can be configured via a [configuration file] and via [URL parameters].
 
 ## Contributing
 
-Send patches on the [mailing list], report bugs on the [issue tracker]. Discuss
+Send patches on [Codeberg], report bugs on the [issue tracker]. Discuss
 in [#soju on Libera Chat].
 
 ## License
@@ -52,8 +52,8 @@ AGPLv3, see LICENSE.
 
 Copyright (C) 2020 The gamja Contributors
 
-[gamja]: https://sr.ht/~emersion/gamja/
-[mailing list]: https://lists.sr.ht/~emersion/public-inbox
+[gamja]: https://codeberg.org/emersion/gamja
+[Codeberg]: https://codeberg.org/emersion/gamja
 [issue tracker]: https://todo.sr.ht/~emersion/gamja
 [Parcel]: https://parceljs.org
 [configure an HTTP server]: doc/setup.md

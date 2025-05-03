@@ -154,10 +154,6 @@ button.danger:hover {
 	padding: 2px 10px;
 	box-sizing: border-box;
 }
-#buffer-list li.active a {
-	color: white;
-	background-color: var(--gray);
-}
 #buffer-list li.error a {
 	color: red;
 }
@@ -166,6 +162,10 @@ button.danger:hover {
 }
 #buffer-list li.unread-highlight a {
 	color: #22009b;
+}
+#buffer-list li.active a {
+	color: white;
+	background-color: var(--gray);
 }
 #buffer-list li:not(.type-server) a {
 	padding-left: 20px;
@@ -302,7 +302,7 @@ button.danger:hover {
 .membership.admin {
 	color: blue;
 }
-.membership.op {
+.membership.operator {
 	color: var(--green);
 }
 .membership.halfop {
@@ -364,8 +364,14 @@ a {
 	color: var(--green);
 }
 #buffer-list li a, a.timestamp, a.nick {
-	color: var(--gray);
 	text-decoration: none;
+}
+#buffer-list li a,
+a.nick {
+	color: var(--main-color);
+}
+a.timestamp {
+	color: var(--gray);
 }
 #buffer-list li a:hover, #buffer-list li a:active,
 a.timestamp:hover, a.timestamp:active,
@@ -591,15 +597,15 @@ ul.switcher-list .server {
 		scrollbar-color: var(--gray) transparent;
 	}
 
-	#buffer-list li.active a {
-		color: var(--sidebar-background);
-		background-color: white;
-	}
 	#buffer-list li.unread-message a {
 		color: var(--green);
 	}
 	#buffer-list li.unread-highlight a {
 		color: #0062cc;
+	}
+	#buffer-list li.active a {
+		color: var(--sidebar-background);
+		background-color: white;
 	}
 
 	#buffer-header .status-gone {
@@ -628,11 +634,6 @@ ul.switcher-list .server {
 	form input[type="search"]:focus {
 		outline: 0;
 		border-color: #3897ff;
-	}
-
-	#buffer-list li a,
-	a.nick {
-		color: var(--main-color);
 	}
 
 	#buffer {

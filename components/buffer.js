@@ -43,7 +43,7 @@ function _Timestamp({ date, url, showSeconds }) {
 		if (showSeconds) {
 			timestamp += ":--";
 		}
-		return html`<spam class="timestamp">${timestamp}</span>`;
+		return html`<span class="timestamp">${timestamp}</span>`;
 	}
 
 	let hh = date.getHours().toString().padStart(2, "0");
@@ -94,7 +94,7 @@ function canFoldMessage(msg) {
 
 class LogLine extends Component {
 	shouldComponentUpdate(nextProps) {
-		return this.props.message !== nextProps.message;
+		return this.props.message !== nextProps.message || this.props.redacted !== nextProps.redacted;
 	}
 
 	render() {
@@ -134,7 +134,7 @@ class LogLine extends Component {
 
 			let ctcp = irc.parseCTCP(msg);
 			if (ctcp) {
-				if (ctcp.command == "ACTION") {
+				if (ctcp.command === "ACTION") {
 					lineClass = "me-tell";
 					content = html`* ${createNick(msg.prefix.name)} ${linkify(stripANSI(ctcp.param), onChannelClick)}`;
 				} else {
@@ -143,15 +143,20 @@ class LogLine extends Component {
 					`;
 				}
 			} else {
-				lineClass = "talk";
 				let prefix = "<", suffix = ">";
-				if (msg.command == "NOTICE") {
+				if (msg.command === "NOTICE") {
+					lineClass += " notice";
 					prefix = suffix = "-";
 				}
-				content = html`${prefix}${createNick(msg.prefix.name)}${suffix} ${linkify(stripANSI(text), onChannelClick)}`;
+				if (this.props.redacted) {
+					content = html`<i>This message has been deleted.</i>`;
+				} else {
+					content = html`${linkify(stripANSI(text), onChannelClick)}`;
+					lineClass += " talk";
+				}
+				content = html`<span class="nick-caret">${prefix}</span>${createNick(msg.prefix.name)}<span class="nick-caret">${suffix}</span> ${content}`;
 			}
 
-			let status = null;
 			let allowedPrefixes = server.statusMsg;
 			if (target !== buf.name && allowedPrefixes) {
 				let parts = irc.parseTargetPrefix(target, allowedPrefixes);
@@ -196,19 +201,94 @@ class LogLine extends Component {
 			break;
 		case "MODE":
 			target = msg.params[0];
+			let modeStr = msg.params[1];
+
+			let user = html`${createNick(msg.prefix.name)}`;
+
+			// TODO: use irc.forEachChannelModeUpdate()
+			if (buf.type === BufferType.CHANNEL && modeStr.length === 2 && server.cm(buf.name) === server.cm(target)) {
+				let plusMinus = modeStr[0];
+				let mode = modeStr[1];
+				let arg = msg.params[2];
+
+				let verb;
+				switch (mode) {
+				case "b":
+					verb = plusMinus === "+" ? "added" : "removed";
+					content = html`${user} has ${verb} a ban on ${arg}`;
+					break;
+				case "e":
+					verb = plusMinus === "+" ? "added" : "removed";
+					content = html`${user} has ${verb} a ban exemption on ${arg}`;
+					break;
+				case "l":
+					if (plusMinus === "+") {
+						content = html`${user} has set the channel user limit to ${arg}`;
+					} else {
+						content = html`${user} has unset the channel user limit`;
+					}
+					break;
+				case "i":
+					verb = plusMinus === "+" ? "marked": "unmarked";
+					content = html`${user} has ${verb} as invite-only`;
+					break;
+				case "m":
+					verb = plusMinus === "+" ? "marked": "unmarked";
+					content = html`${user} has ${verb} as moderated`;
+					break;
+				case "s":
+					verb = plusMinus === "+" ? "marked": "unmarked";
+					content = html`${user} has ${verb} as secret`;
+					break;
+				case "t":
+					verb = plusMinus === "+" ? "locked": "unlocked";
+					content = html`${user} has ${verb} the channel topic`;
+					break;
+				case "n":
+					verb = plusMinus === "+" ? "allowed": "denied";
+					content = html`${user} has ${verb} external messages to this channel`;
+					break;
+				}
+				if (content) {
+					break;
+				}
+
+				// Channel membership modes
+				let membership;
+				for (let prefix in irc.STD_MEMBERSHIP_MODES) {
+					if (irc.STD_MEMBERSHIP_MODES[prefix] === mode) {
+						membership = irc.STD_MEMBERSHIP_NAMES[prefix];
+						break;
+					}
+				}
+				if (membership && arg) {
+					let verb = plusMinus === "+" ? "granted" : "revoked";
+					let preposition = plusMinus === "+" ? "to" : "from";
+					content = html`
+						${user} has ${verb} ${membership} privileges ${preposition} ${createNick(arg)}
+					`;
+					break;
+				}
+			}
+
 			content = html`
-				* ${createNick(msg.prefix.name)} sets mode ${msg.params.slice(1).join(" ")}
+				${user} sets mode ${msg.params.slice(1).join(" ")}
 			`;
-			// TODO: case-mapping
-			if (buf.name !== target) {
+			if (server.cm(buf.name) !== server.cm(target)) {
 				content = html`${content} on ${target}`;
 			}
 			break;
 		case "TOPIC":
 			let topic = msg.params[1];
-			content = html`
-				${createNick(msg.prefix.name)} changed the topic to: ${linkify(stripANSI(topic), onChannelClick)}
-			`;
+			if (topic) {
+				content = html`
+					${createNick(msg.prefix.name)} changed the topic to: ${linkify(stripANSI(topic), onChannelClick)}
+				`;
+			} else {
+				content = html`
+					${createNick(msg.prefix.name)} cleared the topic
+				`;
+			}
 			break;
 		case "INVITE":
 			invitee = msg.params[0];
@@ -289,7 +369,7 @@ class LogLine extends Component {
 			content = html`${createNick(buf.name)} is offline`;
 			break;
 		default:
-			if (irc.isError(msg.command) && msg.command != irc.ERR_NOMOTD) {
+			if (irc.isError(msg.command) && msg.command !== irc.ERR_NOMOTD) {
 				lineClass = "error";
 			}
 			content = html`${msg.command} ${linkify(msg.params.join(" "))}`;
@@ -604,18 +684,17 @@ export default class Buffer extends Component {
 		}
 
 		let server = this.props.server;
-		let bouncerNetwork = this.props.bouncerNetwork;
 		let settings = this.props.settings;
 		let serverName = server.name;
 
 		let children = [];
-		if (buf.type == BufferType.SERVER) {
+		if (buf.type === BufferType.SERVER) {
 			children.push(html`<${NotificationNagger}/>`);
 		}
-		if (buf.type == BufferType.SERVER && server.isBouncer && !server.bouncerNetID) {
+		if (buf.type === BufferType.SERVER && server.isBouncer && !server.bouncerNetID) {
 			children.push(html`<${ProtocolHandlerNagger} bouncerName=${serverName}/>`);
 		}
-		if (buf.type == BufferType.SERVER && server.status == ServerStatus.REGISTERED && server.supportsSASLPlain && !server.account) {
+		if (buf.type === BufferType.SERVER && server.status === ServerStatus.REGISTERED && server.supportsSASLPlain && !server.account) {
 			children.push(html`
 				<${AccountNagger}
 					server=${server}
@@ -636,6 +715,7 @@ export default class Buffer extends Component {
 					message=${msg}
 					buffer=${buf}
 					server=${server}
+					redacted=${buf.redacted.has(msg.tags.msgid)}
 					onChannelClick=${onChannelClick}
 					onNickClick=${onNickClick}
 					onVerifyClick=${onVerifyClick}
@@ -685,7 +765,7 @@ export default class Buffer extends Component {
 					keep[partIndexes.get(msg.prefix.name)] = false;
 					partIndexes.delete(msg.prefix.name);
 					keep.push(false);
-				} else if (msg.command === "NICK" && msg.prefix.name == msg.params[0]) {
+				} else if (msg.command === "NICK" && msg.prefix.name === msg.params[0]) {
 					keep.push(false);
 				} else {
 					keep.push(true);
@@ -728,7 +808,7 @@ export default class Buffer extends Component {
 				}
 			}
 
-			if (!hasUnreadSeparator && buf.type != BufferType.SERVER && !isMessageBeforeReceipt(msg, buf.prevReadReceipt)) {
+			if (!hasUnreadSeparator && buf.type !== BufferType.SERVER && !isMessageBeforeReceipt(msg, buf.prevReadReceipt)) {
 				sep.push(html`<${UnreadSeparator} key="unread"/>`);
 				hasUnreadSeparator = true;
 			}
@@ -741,7 +821,7 @@ export default class Buffer extends Component {
 
 			if (sep.length > 0) {
 				children.push(createFoldGroup(foldMessages));
-				children.push(sep);
+				children.push(...sep);
 				foldMessages = [];
 			}
 

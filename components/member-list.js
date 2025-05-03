@@ -22,25 +22,6 @@ class MemberItem extends Component {
 	}
 
 	render() {
-		// XXX: If we were feeling creative we could generate unique colors for
-		// each item in ISUPPORT CHANMODES. But I am not feeling creative.
-		const membmap = {
-			"~": "owner",
-			"&": "admin",
-			"@": "op",
-			"%": "halfop",
-			"+": "voice",
-		};
-		const membclass = membmap[this.props.membership[0]] || "";
-		let membership = "";
-		if (this.props.membership) {
-			membership = html`
-				<span class="membership ${membclass}" title=${membclass}>
-					${this.props.membership}
-				</span>
-			`;
-		};
-
 		let title;
 		let user = this.props.user;
 		let classes = ["nick"];
