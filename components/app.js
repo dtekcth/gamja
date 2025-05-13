@@ -667,12 +667,6 @@ export default class App extends Component {
 		}
 	}
 
-	addChatMessage(serverID, bufName, msg) {
-		this.prepareChatMessage(serverID, msg);
-		let bufID = { server: serverID, name: bufName };
-		this.setState((state) => State.addMessage(state, msg, bufID));
-	}
-
 	handleChatMessage(serverID, bufName, msg) {
 		let client = this.clients.get(serverID);
 
@@ -1800,7 +1794,12 @@ export default class App extends Component {
 		}
 
 		for (let msg of result.messages) {
-			this.addChatMessage(buf.server, buf.name, msg);
+			this.prepareChatMessage(buf.server, msg);
+			let destBuffers = this.routeMessage(buf.server, msg);
+			for (let bufName of destBuffers) {
+				let bufID = { server: buf.server, name: bufName };
+				this.setState((state) => State.addMessage(state, msg, bufID));
+			}
 		}
 	}
 
