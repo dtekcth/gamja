@@ -611,11 +611,12 @@ export const State = {
 				if (buf.server !== serverID) {
 					return;
 				}
-				if (!buf.members.has(msg.prefix.name)) {
+				let membership = members.get(msg.prefix.name);
+				if (membership === undefined) {
 					return;
 				}
 				let members = new irc.CaseMapMap(buf.members);
-				members.set(newNick, members.get(msg.prefix.name));
+				members.set(newNick, membership);
 				members.delete(msg.prefix.name);
 				buffers.set(buf.id, { ...buf, members });
 			});
