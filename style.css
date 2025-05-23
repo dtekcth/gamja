@@ -359,6 +359,9 @@ form input[type="search"] {
 	font-family: inherit;
 	font-size: inherit;
 }
+form label input[type="checkbox"], form label input[type="radio"] {
+	margin-right: 0.5em;
+}
 
 a {
 	color: var(--green);
