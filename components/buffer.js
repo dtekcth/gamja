@@ -558,7 +558,7 @@ class NotificationNagger extends Component {
 		}
 
 		return html`
-			<div class="logline">
+			<div class="logline nag">
 				<${Timestamp}/>
 				${" "}
 				<a href="#" onClick=${this.handleClick}>Turn on desktop notifications</a> to get notified about new messages
@@ -599,7 +599,7 @@ class ProtocolHandlerNagger extends Component {
 		}
 		let name = this.props.bouncerName || "this bouncer";
 		return html`
-			<div class="logline">
+			<div class="logline nag">
 				<${Timestamp}/>
 				${" "}
 				<a href="#" onClick=${this.handleClick}>Register our protocol handler</a> to open IRC links with ${name}
@@ -637,7 +637,7 @@ function AccountNagger({ server, onAuthClick, onRegisterClick }) {
 	}
 
 	return html`
-		<div class="logline">
+		<div class="logline nag">
 			<${Timestamp}/> ${msg}
 		</div>
 	`;

@@ -396,7 +396,7 @@ details summary[role="button"] {
 	white-space: pre-wrap;
 	overflow: auto;
 }
-#buffer .talk, #buffer .motd {
+#buffer .talk, #buffer .motd, #buffer .nag {
 	color: var(--main-color);
 }
 #buffer .error {
