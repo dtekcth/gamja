@@ -43,7 +43,7 @@ function _Timestamp({ date, url, showSeconds }) {
 		if (showSeconds) {
 			timestamp += ":--";
 		}
-		return html`<span class="timestamp">${timestamp}</span>`;
+		return html`<span class="timestamp" aria-hidden="true">${timestamp}</span>`;
 	}
 
 	let hh = date.getHours().toString().padStart(2, "0");
@@ -154,7 +154,13 @@ class LogLine extends Component {
 					content = html`${linkify(stripANSI(text), onChannelClick)}`;
 					lineClass += " talk";
 				}
-				content = html`<span class="nick-caret">${prefix}</span>${createNick(msg.prefix.name)}<span class="nick-caret">${suffix}</span> ${content}`;
+				content = html`
+					<span class="nick-caret" aria-hidden="true">${prefix}</span>
+					${createNick(msg.prefix.name)}
+					<span class="nick-caret" aria-hidden="true">${suffix}</span>
+					${" "}
+					${content}
+				`;
 			}
 
 			let allowedPrefixes = server.statusMsg;
@@ -841,7 +847,7 @@ export default class Buffer extends Component {
 		children.push(createFoldGroup(foldMessages));
 
 		return html`
-			<div class="logline-list">
+			<div class="logline-list" role="log">
 				${children}
 			</div>
 		`;

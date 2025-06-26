@@ -2071,7 +2071,7 @@ export default class App extends Component {
 			}
 
 			bufferHeader = html`
-				<section id="buffer-header">
+				<section id="buffer-header" role="banner">
 					<${BufferHeader}
 						buffer=${activeBuffer}
 						server=${activeServer}
@@ -2093,8 +2093,9 @@ export default class App extends Component {
 		if (activeBuffer && activeBuffer.type === BufferType.CHANNEL) {
 			memberList = html`
 				<section
-						id="member-list"
-						class=${this.state.openPanels.memberList ? "expand" : ""}
+					id="member-list"
+					class=${this.state.openPanels.memberList ? "expand" : ""}
+					role="complementary"
 				>
 					<button
 						class="expander"
@@ -2245,8 +2246,8 @@ export default class App extends Component {
 
 		let app = html`
 			<section
-					id="buffer-list"
-					class=${this.state.openPanels.bufferList ? "expand" : ""}
+				id="buffer-list"
+				class=${this.state.openPanels.bufferList ? "expand" : ""}
 			>
 				<${BufferList}
 					buffers=${this.state.buffers}
@@ -2271,7 +2272,7 @@ export default class App extends Component {
 				scrollKey=${this.state.activeBuffer}
 				onScrollTop=${this.handleBufferScrollTop}
 			>
-				<section id="buffer" ref=${this.buffer} tabindex="-1">
+				<section id="buffer" ref=${this.buffer} tabindex="-1" role="main">
 					<${Buffer}
 						buffer=${activeBuffer}
 						server=${activeServer}
