@@ -80,5 +80,9 @@ export default function BufferList(props) {
 		`;
 	});
 
-	return html`<ul role="tablist">${items}</ul>`;
+	return html`
+		<ul role="tablist" aria-label="Buffer list">
+			${items}
+		</ul>
+	`;
 }

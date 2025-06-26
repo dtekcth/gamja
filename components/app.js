@@ -2096,6 +2096,7 @@ export default class App extends Component {
 					id="member-list"
 					class=${this.state.openPanels.memberList ? "expand" : ""}
 					role="complementary"
+					aria-label="Members list"
 				>
 					<button
 						class="expander"
@@ -2222,7 +2223,7 @@ export default class App extends Component {
 		let error = null;
 		if (this.state.error) {
 			error = html`
-				<div id="error-msg">
+				<div id="error-msg" role="alert">
 					${this.state.error}
 					${" "}
 					<button onClick=${this.handleDismissError}>×</button>
@@ -2272,7 +2273,7 @@ export default class App extends Component {
 				scrollKey=${this.state.activeBuffer}
 				onScrollTop=${this.handleBufferScrollTop}
 			>
-				<section id="buffer" ref=${this.buffer} tabindex="-1" role="main">
+				<section id="buffer" ref=${this.buffer} tabindex="-1" role="log">
 					<${Buffer}
 						buffer=${activeBuffer}
 						server=${activeServer}

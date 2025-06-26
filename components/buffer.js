@@ -386,7 +386,7 @@ class LogLine extends Component {
 		}
 
 		return html`
-			<div class="logline ${lineClass}" data-key=${msg.key}>
+			<div class="logline ${lineClass}" data-key=${msg.key} role="listitem">
 				<${Timestamp} date=${new Date(msg.tags.time)} url=${getMessageURL(buf, msg)}/>
 				${" "}
 				${content}
@@ -511,7 +511,7 @@ class FoldGroup extends Component {
 		}
 
 		return html`
-			<div class="logline" data-key=${msgs[0].key}>
+			<div class="logline" data-key=${msgs[0].key} role="listitem">
 				${timestamp}
 				${" "}
 				${content}
@@ -564,7 +564,7 @@ class NotificationNagger extends Component {
 		}
 
 		return html`
-			<div class="logline nag">
+			<div class="logline nag" role="listitem">
 				<${Timestamp}/>
 				${" "}
 				<a href="#" onClick=${this.handleClick}>Turn on desktop notifications</a> to get notified about new messages
@@ -605,7 +605,7 @@ class ProtocolHandlerNagger extends Component {
 		}
 		let name = this.props.bouncerName || "this bouncer";
 		return html`
-			<div class="logline nag">
+			<div class="logline nag" role="listitem">
 				<${Timestamp}/>
 				${" "}
 				<a href="#" onClick=${this.handleClick}>Register our protocol handler</a> to open IRC links with ${name}
@@ -643,7 +643,7 @@ function AccountNagger({ server, onAuthClick, onRegisterClick }) {
 	}
 
 	return html`
-		<div class="logline nag">
+		<div class="logline nag" role="listitem">
 			<${Timestamp}/> ${msg}
 		</div>
 	`;
@@ -662,7 +662,7 @@ class DateSeparator extends Component {
 		let date = this.props.date;
 		let text = date.toLocaleDateString([], { year: "numeric", month: "2-digit", day: "2-digit" });
 		return html`
-			<div class="separator date-separator">
+			<div class="separator date-separator" role="separator">
 				${text}
 			</div>
 		`;
@@ -670,7 +670,7 @@ class DateSeparator extends Component {
 }
 
 function UnreadSeparator(props) {
-	return html`<div class="separator unread-separator">New messages</div>`;
+	return html`<div class="separator unread-separator" role="separator">New messages</div>`;
 }
 
 function sameDate(d1, d2) {
@@ -847,7 +847,7 @@ export default class Buffer extends Component {
 		children.push(createFoldGroup(foldMessages));
 
 		return html`
-			<div class="logline-list" role="log">
+			<div class="logline-list" role="list">
 				${children}
 			</div>
 		`;
