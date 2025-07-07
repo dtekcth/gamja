@@ -1,6 +1,6 @@
 import globals from "globals";
 import js from "@eslint/js";
-import stylisticJs from "@stylistic/eslint-plugin-js";
+import stylistic from "@stylistic/eslint-plugin";
 
 export default [
 	{
@@ -14,7 +14,7 @@ export default [
 				"process": "readonly",
 			},
 		},
-		plugins: { "@stylistic/js": stylisticJs },
+		plugins: { "@stylistic": stylistic },
 		rules: {
 			"no-case-declarations": "off",
 			"no-unused-vars": ["error", {
@@ -35,22 +35,22 @@ export default [
 			"object-shorthand": "warn",
 			"curly": "warn",
 			"camelcase": "warn",
-			"@stylistic/js/indent": ["warn", "tab"],
-			"@stylistic/js/quotes": ["warn", "double"],
-			"@stylistic/js/semi": "warn",
-			"@stylistic/js/brace-style": ["warn", "1tbs"],
-			"@stylistic/js/comma-dangle": ["warn", "always-multiline"],
-			"@stylistic/js/comma-spacing": "warn",
-			"@stylistic/js/arrow-parens": "warn",
-			"@stylistic/js/arrow-spacing": "warn",
-			"@stylistic/js/block-spacing": "warn",
-			"@stylistic/js/object-curly-spacing": ["warn", "always"],
-			"@stylistic/js/object-curly-newline": ["warn", {
+			"@stylistic/indent": ["warn", "tab", { SwitchCase: 0 }],
+			"@stylistic/quotes": ["warn", "double"],
+			"@stylistic/semi": "warn",
+			"@stylistic/brace-style": ["warn", "1tbs"],
+			"@stylistic/comma-dangle": ["warn", "always-multiline"],
+			"@stylistic/comma-spacing": "warn",
+			"@stylistic/arrow-parens": "warn",
+			"@stylistic/arrow-spacing": "warn",
+			"@stylistic/block-spacing": "warn",
+			"@stylistic/object-curly-spacing": ["warn", "always"],
+			"@stylistic/object-curly-newline": ["warn", {
 				multiline: true,
 				consistent: true,
 			}],
-			"@stylistic/js/array-bracket-spacing": ["warn", "never"],
-			"@stylistic/js/array-bracket-newline": ["warn", "consistent"],
+			"@stylistic/array-bracket-spacing": ["warn", "never"],
+			"@stylistic/array-bracket-newline": ["warn", "consistent"],
 		},
 	},
 ];
