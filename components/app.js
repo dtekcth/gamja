@@ -667,12 +667,6 @@ export default class App extends Component {
 		}
 	}
 
-	addChatMessage(serverID, bufName, msg) {
-		this.prepareChatMessage(serverID, msg);
-		let bufID = { server: serverID, name: bufName };
-		this.setState((state) => State.addMessage(state, msg, bufID));
-	}
-
 	handleChatMessage(serverID, bufName, msg) {
 		let client = this.clients.get(serverID);
 
@@ -1800,7 +1794,12 @@ export default class App extends Component {
 		}
 
 		for (let msg of result.messages) {
-			this.addChatMessage(buf.server, buf.name, msg);
+			this.prepareChatMessage(buf.server, msg);
+			let destBuffers = this.routeMessage(buf.server, msg);
+			for (let bufName of destBuffers) {
+				let bufID = { server: buf.server, name: bufName };
+				this.setState((state) => State.addMessage(state, msg, bufID));
+			}
 		}
 	}
 
@@ -2072,7 +2071,7 @@ export default class App extends Component {
 			}
 
 			bufferHeader = html`
-				<section id="buffer-header">
+				<section id="buffer-header" role="banner">
 					<${BufferHeader}
 						buffer=${activeBuffer}
 						server=${activeServer}
@@ -2094,8 +2093,10 @@ export default class App extends Component {
 		if (activeBuffer && activeBuffer.type === BufferType.CHANNEL) {
 			memberList = html`
 				<section
-						id="member-list"
-						class=${this.state.openPanels.memberList ? "expand" : ""}
+					id="member-list"
+					class=${this.state.openPanels.memberList ? "expand" : ""}
+					role="complementary"
+					aria-label="Members list"
 				>
 					<button
 						class="expander"
@@ -2222,7 +2223,7 @@ export default class App extends Component {
 		let error = null;
 		if (this.state.error) {
 			error = html`
-				<div id="error-msg">
+				<div id="error-msg" role="alert">
 					${this.state.error}
 					${" "}
 					<button onClick=${this.handleDismissError}>×</button>
@@ -2246,8 +2247,8 @@ export default class App extends Component {
 
 		let app = html`
 			<section
-					id="buffer-list"
-					class=${this.state.openPanels.bufferList ? "expand" : ""}
+				id="buffer-list"
+				class=${this.state.openPanels.bufferList ? "expand" : ""}
 			>
 				<${BufferList}
 					buffers=${this.state.buffers}
@@ -2272,7 +2273,7 @@ export default class App extends Component {
 				scrollKey=${this.state.activeBuffer}
 				onScrollTop=${this.handleBufferScrollTop}
 			>
-				<section id="buffer" ref=${this.buffer} tabindex="-1">
+				<section id="buffer" ref=${this.buffer} tabindex="-1" role="log">
 					<${Buffer}
 						buffer=${activeBuffer}
 						server=${activeServer}

@@ -359,6 +359,9 @@ form input[type="search"] {
 	font-family: inherit;
 	font-size: inherit;
 }
+form label input[type="checkbox"], form label input[type="radio"] {
+	margin-right: 0.5em;
+}
 
 a {
 	color: var(--green);
@@ -396,7 +399,7 @@ details summary[role="button"] {
 	white-space: pre-wrap;
 	overflow: auto;
 }
-#buffer .talk, #buffer .motd {
+#buffer .talk, #buffer .motd, #buffer .nag {
 	color: var(--main-color);
 }
 #buffer .error {

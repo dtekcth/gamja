@@ -611,11 +611,12 @@ export const State = {
 				if (buf.server !== serverID) {
 					return;
 				}
-				if (!buf.members.has(msg.prefix.name)) {
+				let membership = members.get(msg.prefix.name);
+				if (membership === undefined) {
 					return;
 				}
 				let members = new irc.CaseMapMap(buf.members);
-				members.set(newNick, members.get(msg.prefix.name));
+				members.set(newNick, membership);
 				members.delete(msg.prefix.name);
 				buffers.set(buf.id, { ...buf, members });
 			});
@@ -670,12 +671,16 @@ export const State = {
 				let members = new irc.CaseMapMap(buf.members);
 
 				irc.forEachChannelModeUpdate(msg, client.isupport, (mode, add, arg) => {
-					if (prefixByMode.has(mode)) {
-						let nick = arg;
-						let membership = members.get(nick);
-						let letter = prefixByMode.get(mode);
-						members.set(nick, updateMembership(membership, letter, add, client));
+					if (!prefixByMode.has(mode)) {
+						return;
 					}
+					let nick = arg;
+					let membership = members.get(nick);
+					if (membership === undefined) {
+						return;
+					}
+					let letter = prefixByMode.get(mode);
+					members.set(nick, updateMembership(membership, letter, add, client));
 				});
 
 				return { members };

@@ -47,11 +47,11 @@ export default class Dialog extends Component {
 
 	render() {
 		return html`
-			<div class="dialog" onClick=${this.handleBackdropClick}>
+			<div class="dialog" onClick=${this.handleBackdropClick} role="dialog" aria-modal="true">
 				<div class="dialog-body" ref=${this.body}>
 					<div class="dialog-header">
 						<h2>${this.props.title}</h2>
-						<button class="dialog-close" onClick=${this.handleCloseClick}>×</button>
+						<button class="dialog-close" onClick=${this.handleCloseClick} title="Close">×</button>
 					</div>
 					${this.props.children}
 				</div>

@@ -47,7 +47,7 @@ function BufferItem(props) {
 	}
 
 	return html`
-		<li class="${classes.join(" ")}">
+		<li class="${classes.join(" ")}" role="tab" aria-selected="${props.active}">
 			<a
 				href=${getBufferURL(props.buffer)}
 				title=${title}
@@ -80,5 +80,9 @@ export default function BufferList(props) {
 		`;
 	});
 
-	return html`<ul>${items}</ul>`;
+	return html`
+		<ul role="tablist" aria-label="Buffer list">
+			${items}
+		</ul>
+	`;
 }
